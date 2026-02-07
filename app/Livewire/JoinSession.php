@@ -10,14 +10,17 @@ use Livewire\Component;
 class JoinSession extends Component
 {
     public TierTalkSession $session;
+
     public string $username = '';
+
     public bool $sessionFull = false;
+
     public bool $sessionExpired = false;
 
     public function mount(TierTalkSession $session): void
     {
         $this->session = $session;
-        $this->sessionFull = !$session->canAcceptParticipants();
+        $this->sessionFull = ! $session->canAcceptParticipants();
         $this->sessionExpired = $session->isExpired();
     }
 
@@ -38,12 +41,14 @@ class JoinSession extends Component
 
         if ($exists) {
             $this->addError('username', 'This username is already taken in this session.');
+
             return;
         }
 
         // Check capacity again
-        if (!$this->session->canAcceptParticipants()) {
+        if (! $this->session->canAcceptParticipants()) {
             $this->sessionFull = true;
+
             return;
         }
 

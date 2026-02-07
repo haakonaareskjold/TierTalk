@@ -5,14 +5,15 @@ namespace App\Livewire;
 use App\Events\VoteCast;
 use App\Models\Participant;
 use App\Models\TierTalkSession;
-use App\Models\Question;
 use Livewire\Attributes\On;
 use Livewire\Component;
 
 class VotingInterface extends Component
 {
     public TierTalkSession $session;
+
     public ?Participant $participant = null;
+
     public bool $sessionEnded = false;
 
     public function mount(TierTalkSession $session): void
@@ -31,7 +32,7 @@ class VotingInterface extends Component
 
     public function vote(int $questionId, string $value): void
     {
-        if (!$this->participant || $this->sessionEnded) {
+        if (! $this->participant || $this->sessionEnded) {
             return;
         }
 
@@ -40,13 +41,13 @@ class VotingInterface extends Component
             ->where('is_active', true)
             ->first();
 
-        if (!$question) {
+        if (! $question) {
             return;
         }
 
         // Validate the vote value against allowed options
         $allowedOptions = $question->answer_choices;
-        if (!in_array($value, $allowedOptions)) {
+        if (! in_array($value, $allowedOptions)) {
             return;
         }
 

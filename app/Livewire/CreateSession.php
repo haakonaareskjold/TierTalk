@@ -12,7 +12,9 @@ use Livewire\Component;
 class CreateSession extends Component
 {
     public string $title = '';
+
     public int $maxParticipants = 20;
+
     public int $expirationHours = 1;
 
     /**
@@ -94,7 +96,7 @@ class CreateSession extends Component
 
         $this->redirect(route('session.host', [
             'slug' => $session->slug,
-            'token' => $session->host_token
+            'token' => $session->host_token,
         ]));
     }
 

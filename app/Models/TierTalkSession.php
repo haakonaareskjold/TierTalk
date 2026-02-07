@@ -51,7 +51,7 @@ class TierTalkSession extends Model
 
     public function isActive(): bool
     {
-        return !$this->isExpired();
+        return ! $this->isExpired();
     }
 
     public function canAcceptParticipants(): bool

@@ -22,7 +22,7 @@ class QuestionReset implements ShouldBroadcast
     public function broadcastOn(): array
     {
         return [
-            new Channel('session.' . $this->session->id),
+            new Channel('session.'.$this->session->id),
         ];
     }
 
