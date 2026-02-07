@@ -59,6 +59,15 @@ services:
       timeout: 5s
       retries: 3
 
+  cloudflared:
+    image: cloudflare/cloudflared:latest
+    restart: unless-stopped
+    command: tunnel --url http://nginx:80
+    networks:
+      - tiertalk
+    depends_on:
+      - nginx
+
 networks:
   tiertalk:
     driver: bridge
