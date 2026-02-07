@@ -151,6 +151,28 @@
                                 Options: {{ implode(', ', $question->answer_choices) }}
                             </div>
 
+                            <!-- Host Voting -->
+                            @php
+                                $hostVoted = $hostParticipant && $question->hasVoteFrom($hostParticipant);
+                            @endphp
+                            @if(!$hostVoted)
+                                <div class="mt-4 p-3 bg-blue-50 rounded-lg border border-blue-200">
+                                    <p class="text-sm text-blue-700 mb-2">Cast your vote:</p>
+                                    <div class="flex flex-wrap gap-2">
+                                        @foreach($question->answer_choices as $option)
+                                            <button
+                                                wire:click="vote({{ $question->id }}, '{{ addslashes($option) }}')"
+                                                class="px-4 py-2 text-sm rounded-lg border-2 border-blue-300 hover:border-blue-500 hover:bg-blue-500 hover:text-white text-blue-700 font-medium transition"
+                                            >
+                                                {{ $option }}
+                                            </button>
+                                        @endforeach
+                                    </div>
+                                </div>
+                            @else
+                                <div class="mt-2 text-sm text-green-600">✓ You voted: {{ $question->getVoteFrom($hostParticipant)?->vote_value }}</div>
+                            @endif
+
                             <!-- Vote Distribution -->
                             @if($question->votes->count() > 0)
                                 <div class="mt-4">

@@ -6,15 +6,19 @@ use App\Events\ParticipantKicked;
 use App\Events\QuestionAdded;
 use App\Events\QuestionReset;
 use App\Events\SessionEnded;
+use App\Events\VoteCast;
+use App\Models\Participant;
 use App\Models\TierTalkSession;
-use App\Models\Question;
 use Livewire\Attributes\On;
 use Livewire\Component;
 
 class HostDashboard extends Component
 {
     public TierTalkSession $session;
+
     public string $newQuestion = '';
+
+    public ?Participant $hostParticipant = null;
 
     /**
      * @var array<int, string>
@@ -24,6 +28,52 @@ class HostDashboard extends Component
     public function mount(TierTalkSession $session): void
     {
         $this->session = $session;
+        $this->ensureHostParticipant();
+    }
+
+    protected function ensureHostParticipant(): void
+    {
+        $this->hostParticipant = $this->session->participants()
+            ->where('username', '🎯 Host')
+            ->first();
+
+        if (! $this->hostParticipant) {
+            $this->hostParticipant = $this->session->participants()->create([
+                'username' => '🎯 Host',
+            ]);
+        }
+    }
+
+    public function vote(int $questionId, string $value): void
+    {
+        if (! $this->hostParticipant) {
+            return;
+        }
+
+        $question = $this->session->questions()
+            ->where('id', $questionId)
+            ->where('is_active', true)
+            ->first();
+
+        if (! $question) {
+            return;
+        }
+
+        $allowedOptions = $question->answer_choices;
+        if (! in_array($value, $allowedOptions)) {
+            return;
+        }
+
+        if ($this->hostParticipant->hasVotedOn($question)) {
+            return;
+        }
+
+        $vote = $question->votes()->create([
+            'participant_id' => $this->hostParticipant->id,
+            'vote_value' => $value,
+        ]);
+
+        VoteCast::dispatch($this->session, $question, $vote);
     }
 
     public function addNewOption(): void
@@ -72,7 +122,7 @@ class HostDashboard extends Component
     public function toggleQuestion(int $questionId): void
     {
         $question = $this->session->questions()->findOrFail($questionId);
-        $question->update(['is_active' => !$question->is_active]);
+        $question->update(['is_active' => ! $question->is_active]);
     }
 
     public function deleteQuestion(int $questionId): void
@@ -118,6 +168,7 @@ class HostDashboard extends Component
         return view('livewire.host-dashboard', [
             'questions' => $this->session->questions()->with('votes')->get(),
             'participants' => $this->session->participants,
+            'hostParticipant' => $this->hostParticipant,
         ]);
     }
 }
