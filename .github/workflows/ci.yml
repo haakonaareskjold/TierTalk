@@ -49,3 +49,10 @@ jobs:
           DB_DATABASE: testing
           DB_USERNAME: root
           DB_PASSWORD: password
+
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Deploy to Laravel Cloud
+        run: |
+          curl -X POST "${{ secrets.LARAVEL_CLOUD_DEPLOY_HOOK }}?commit_hash=${{ github.sha }}"
