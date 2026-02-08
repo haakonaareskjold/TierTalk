@@ -11,8 +11,8 @@ window.Echo = new Echo({
     broadcaster: 'reverb',
     key: import.meta.env.VITE_REVERB_APP_KEY,
     wsHost: wsHost,
-    wsPort: isSecure ? 443 : (import.meta.env.VITE_REVERB_PORT ?? 80),
-    wssPort: 443,
+    wsPort: import.meta.env.VITE_REVERB_PORT,
+    wssPort: import.meta.env.VITE_REVERB_PORT,
     forceTLS: isSecure,
     enabledTransports: ['ws', 'wss'],
 });
