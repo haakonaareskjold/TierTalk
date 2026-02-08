@@ -10,6 +10,7 @@ uses(RefreshDatabase::class);
 it('has default display settings on session creation', function () {
     $session = TierTalkSession::create([
         'title' => 'Test Session',
+        'username' => 'John Doe',
         'max_participants' => 10,
         'expires_at' => now()->addDay(),
     ]);
@@ -21,6 +22,7 @@ it('has default display settings on session creation', function () {
 it('can toggle show_average_to_all setting', function () {
     $session = TierTalkSession::create([
         'title' => 'Test Session',
+        'username' => 'John Doe',
         'max_participants' => 10,
         'expires_at' => now()->addDay(),
     ]);
@@ -41,6 +43,7 @@ it('can toggle show_average_to_all setting', function () {
 it('can toggle show_hover_to_all setting', function () {
     $session = TierTalkSession::create([
         'title' => 'Test Session',
+        'username' => 'John Doe',
         'max_participants' => 10,
         'expires_at' => now()->addDay(),
     ]);
@@ -61,6 +64,7 @@ it('can toggle show_hover_to_all setting', function () {
 it('displays display settings controls in host dashboard', function () {
     $session = TierTalkSession::create([
         'title' => 'Test Session',
+        'username' => 'John Doe',
         'max_participants' => 10,
         'expires_at' => now()->addDay(),
     ]);

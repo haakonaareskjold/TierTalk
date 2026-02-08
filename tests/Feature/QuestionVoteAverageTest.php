@@ -9,6 +9,7 @@ uses(RefreshDatabase::class);
 it('identifies numeric answer options correctly', function () {
     $session = TierTalkSession::create([
         'title' => 'Test Session',
+        'username' => 'John Doe',
         'max_participants' => 10,
         'expires_at' => now()->addDay(),
     ]);
@@ -39,6 +40,7 @@ it('identifies numeric answer options correctly', function () {
 it('calculates average for numeric votes', function () {
     $session = TierTalkSession::create([
         'title' => 'Test Session',
+        'username' => 'John Doe',
         'max_participants' => 10,
         'expires_at' => now()->addDay(),
     ]);
@@ -64,6 +66,7 @@ it('calculates average for numeric votes', function () {
 it('returns null average for non-numeric options', function () {
     $session = TierTalkSession::create([
         'title' => 'Test Session',
+        'username' => 'John Doe',
         'max_participants' => 10,
         'expires_at' => now()->addDay(),
     ]);
@@ -84,6 +87,7 @@ it('returns null average for non-numeric options', function () {
 it('returns null average when no votes exist', function () {
     $session = TierTalkSession::create([
         'title' => 'Test Session',
+        'username' => 'John Doe',
         'max_participants' => 10,
         'expires_at' => now()->addDay(),
     ]);
@@ -100,6 +104,7 @@ it('returns null average when no votes exist', function () {
 it('groups voters by option', function () {
     $session = TierTalkSession::create([
         'title' => 'Test Session',
+        'username' => 'John Doe',
         'max_participants' => 10,
         'expires_at' => now()->addDay(),
     ]);

@@ -17,6 +17,7 @@ function createHostSession(array $attributes = []): TierTalkSession
 {
     return TierTalkSession::create(array_merge([
         'title' => 'Test Session',
+        'username' => 'John Doe',
         'max_participants' => 10,
         'expires_at' => now()->addHours(2),
     ], $attributes));
@@ -35,7 +36,7 @@ it('creates host participant on mount', function () {
 
     Livewire::test(HostDashboard::class, ['session' => $session]);
 
-    expect(Participant::where('tier_talk_session_id', $session->id)->where('username', '🎯 Host')->exists())->toBeTrue();
+    expect(Participant::where('tier_talk_session_id', $session->id)->where('username', 'John Doe')->exists())->toBeTrue();
 });
 
 it('reuses host participant on subsequent mounts', function () {
@@ -44,7 +45,7 @@ it('reuses host participant on subsequent mounts', function () {
     Livewire::test(HostDashboard::class, ['session' => $session]);
     Livewire::test(HostDashboard::class, ['session' => $session]);
 
-    expect(Participant::where('username', '🎯 Host')->count())->toBe(1);
+    expect(Participant::where('username', 'John Doe')->count())->toBe(1);
 });
 
 it('can add question', function () {
@@ -227,7 +228,7 @@ it('allows host to vote on question', function () {
     Livewire::test(HostDashboard::class, ['session' => $session])
         ->call('vote', $question->id, 'Yes');
 
-    $hostParticipant = Participant::where('username', '🎯 Host')->first();
+    $hostParticipant = Participant::where('username', 'John Doe')->first();
     expect(Vote::where('question_id', $question->id)
         ->where('participant_id', $hostParticipant->id)
         ->where('vote_value', 'Yes')
@@ -248,7 +249,7 @@ it('prevents host from voting twice on same question', function () {
         ->call('vote', $question->id, 'Yes')
         ->call('vote', $question->id, 'No');
 
-    $hostParticipant = Participant::where('username', '🎯 Host')->first();
+    $hostParticipant = Participant::where('username', 'John Doe')->first();
     expect(Vote::where('participant_id', $hostParticipant->id)->count())->toBe(1)
         ->and(Vote::where('participant_id', $hostParticipant->id)->first()->vote_value)->toBe('Yes');
 });
@@ -264,7 +265,7 @@ it('prevents host from voting with invalid option', function () {
     Livewire::test(HostDashboard::class, ['session' => $session])
         ->call('vote', $question->id, 'InvalidOption');
 
-    $hostParticipant = Participant::where('username', '🎯 Host')->first();
+    $hostParticipant = Participant::where('username', 'John Doe')->first();
     expect(Vote::where('participant_id', $hostParticipant->id)->exists())->toBeFalse();
 });
 
@@ -280,7 +281,7 @@ it('prevents host from voting on inactive question', function () {
     Livewire::test(HostDashboard::class, ['session' => $session])
         ->call('vote', $question->id, 'Yes');
 
-    $hostParticipant = Participant::where('username', '🎯 Host')->first();
+    $hostParticipant = Participant::where('username', 'John Doe')->first();
     expect(Vote::where('participant_id', $hostParticipant->id)->exists())->toBeFalse();
 });
 

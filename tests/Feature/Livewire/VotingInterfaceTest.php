@@ -190,6 +190,7 @@ it('displays custom answer options', function () {
 it('only shows active questions', function () {
     $session = TierTalkSession::create([
         'title' => 'Test Session',
+        'username' => 'John Doe',
         'max_participants' => 10,
         'expires_at' => now()->addHours(2),
     ]);
@@ -220,6 +221,7 @@ it('only shows active questions', function () {
 it('shows waiting message when no questions', function () {
     $session = TierTalkSession::create([
         'title' => 'Test Session',
+        'username' => 'John Doe',
         'max_participants' => 10,
         'expires_at' => now()->addHours(2),
     ]);
@@ -234,6 +236,7 @@ it('shows waiting message when no questions', function () {
 it('allows participant to vote on multiple questions', function () {
     $session = TierTalkSession::create([
         'title' => 'Test Session',
+        'username' => 'John Doe',
         'max_participants' => 10,
         'expires_at' => now()->addHours(2),
     ]);

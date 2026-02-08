@@ -85,7 +85,7 @@ class CreateSession extends Component
 
         $session = TierTalkSession::create([
             'title' => $this->title ?: 'TierTalk Session',
-            'username' => $this->username,
+            'username' => $this->username ?: 'Host',
             'max_participants' => $this->maxParticipants,
             'expires_at' => now()->addHours($this->expirationHours),
         ]);

@@ -12,7 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('tier_talk_sessions', function (Blueprint $table) {
-            $table->string('username');
+            $table->string('username')->nullable();
         });
     }
 };
