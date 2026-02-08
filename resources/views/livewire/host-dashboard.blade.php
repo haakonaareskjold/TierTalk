@@ -1,10 +1,10 @@
 <div class="space-y-6">
     <!-- Session Info Header -->
-    <div class="bg-white rounded-2xl shadow-lg p-6">
+    <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-6">
         <div class="flex flex-wrap items-center justify-between gap-4">
             <div>
-                <h1 class="text-2xl font-bold text-gray-900">{{ $session->title }}</h1>
-                <p class="text-gray-500 text-sm mt-1">
+                <h1 class="text-2xl font-bold text-gray-900 dark:text-white">{{ $session->title }}</h1>
+                <p class="text-gray-500 dark:text-gray-400 text-sm mt-1">
                     Expires: {{ $session->expires_at->diffForHumans() }}
                     @if($session->isExpired())
                         <span class="text-red-500 font-medium">(Expired)</span>
@@ -12,7 +12,7 @@
                 </p>
             </div>
             <div class="flex items-center gap-3">
-                <span class="bg-green-100 text-green-800 px-3 py-1 rounded-full text-sm font-medium">
+                <span class="bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-400 px-3 py-1 rounded-full text-sm font-medium">
                     {{ $participants->count() }}/{{ $session->max_participants }} Participants
                 </span>
                 <button
@@ -26,14 +26,14 @@
         </div>
 
         <!-- Share URL -->
-        <div class="mt-4 p-4 bg-gray-50 rounded-lg">
-            <label class="block text-sm font-medium text-gray-700 mb-2">Share this link with participants:</label>
+        <div class="mt-4 p-4 bg-gray-50 dark:bg-gray-900/50 rounded-lg">
+            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Share this link with participants:</label>
             <div class="flex gap-2">
                 <input
                     type="text"
                     value="{{ $session->share_url }}"
                     readonly
-                    class="flex-1 px-4 py-2 bg-white border border-gray-300 rounded-lg text-gray-600"
+                    class="flex-1 px-4 py-2 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg text-gray-600 dark:text-gray-300"
                     id="shareUrl"
                 >
                 <button
@@ -46,26 +46,26 @@
         </div>
 
         <!-- Display Settings -->
-        <div class="mt-4 p-4 bg-blue-50 rounded-lg border border-blue-200">
-            <label class="block text-sm font-medium text-blue-700 mb-3">Display Settings for Participants</label>
+        <div class="mt-4 p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg border border-blue-200 dark:border-blue-800">
+            <label class="block text-sm font-medium text-blue-700 dark:text-blue-300 mb-3">Display Settings for Participants</label>
             <div class="flex flex-wrap gap-6">
                 <label class="flex items-center gap-2 cursor-pointer">
                     <input
                         type="checkbox"
                         wire:click="toggleShowAverageToAll"
                         {{ $session->show_average_to_all ? 'checked' : '' }}
-                        class="w-4 h-4 text-primary border-gray-300 rounded focus:ring-primary"
+                        class="w-4 h-4 text-primary border-gray-300 dark:border-gray-600 rounded focus:ring-primary"
                     >
-                    <span class="text-sm text-gray-700">Show average to all participants</span>
+                    <span class="text-sm text-gray-700 dark:text-gray-300">Show average to all participants</span>
                 </label>
                 <label class="flex items-center gap-2 cursor-pointer">
                     <input
                         type="checkbox"
                         wire:click="toggleShowHoverToAll"
                         {{ $session->show_hover_to_all ? 'checked' : '' }}
-                        class="w-4 h-4 text-primary border-gray-300 rounded focus:ring-primary"
+                        class="w-4 h-4 text-primary border-gray-300 dark:border-gray-600 rounded focus:ring-primary"
                     >
-                    <span class="text-sm text-gray-700">Show voter names on hover to all</span>
+                    <span class="text-sm text-gray-700 dark:text-gray-300">Show voter names on hover to all</span>
                 </label>
             </div>
         </div>
@@ -74,24 +74,24 @@
     <div class="grid lg:grid-cols-3 gap-6">
         <!-- Questions Panel -->
         <div class="lg:col-span-2 space-y-4">
-            <div class="bg-white rounded-2xl shadow-lg p-6">
-                <h2 class="text-xl font-semibold text-gray-900 mb-4">Questions</h2>
+            <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-6">
+                <h2 class="text-xl font-semibold text-gray-900 dark:text-white mb-4">Questions</h2>
 
                 <!-- Add New Question -->
-                <form wire:submit="addQuestion" class="mb-6 p-4 bg-gray-50 rounded-lg border border-gray-200">
+                <form wire:submit="addQuestion" class="mb-6 p-4 bg-gray-50 dark:bg-gray-900/50 rounded-lg border border-gray-200 dark:border-gray-700">
                     <div class="mb-3">
                         <input
                             type="text"
                             wire:model="newQuestion"
                             placeholder="Add a new question..."
-                            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
+                            class="w-full px-4 py-2 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg text-gray-900 dark:text-white focus:ring-2 focus:ring-primary focus:border-transparent placeholder-gray-400"
                         >
                         @error('newQuestion') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
                     </div>
 
                     <!-- Answer Options -->
                     <div class="mb-3">
-                        <label class="block text-xs font-medium text-gray-500 mb-2">Answer Options</label>
+                        <label class="block text-xs font-medium text-gray-500 dark:text-gray-400 mb-2">Answer Options</label>
                         <div class="space-y-2">
                             @foreach($newOptions as $oIndex => $option)
                                 <div class="flex gap-2 items-center">
@@ -99,13 +99,13 @@
                                         type="text"
                                         wire:model="newOptions.{{ $oIndex }}"
                                         placeholder="e.g., Yes, No, Messi..."
-                                        class="flex-1 px-3 py-1.5 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
+                                        class="flex-1 px-3 py-1.5 text-sm bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg text-gray-900 dark:text-white focus:ring-2 focus:ring-primary focus:border-transparent placeholder-gray-400"
                                     >
                                     @if(count($newOptions) > 2)
                                         <button
                                             type="button"
                                             wire:click="removeNewOption({{ $oIndex }})"
-                                            class="px-2 py-1 text-red-400 hover:text-red-600 hover:bg-red-50 rounded transition"
+                                            class="px-2 py-1 text-red-400 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 rounded transition"
                                         >
                                             ✕
                                         </button>
@@ -133,11 +133,11 @@
                 <!-- Questions List -->
                 <div class="space-y-4">
                     @forelse($questions as $question)
-                        <div class="border border-gray-200 rounded-xl p-4 {{ !$question->is_active ? 'opacity-50' : '' }}">
+                        <div class="border border-gray-200 dark:border-gray-700 rounded-xl p-4 {{ !$question->is_active ? 'opacity-50' : '' }}">
                             <div class="flex items-start justify-between gap-4">
                                 <div class="flex-1">
-                                    <p class="font-medium text-gray-900">{{ $question->question_text }}</p>
-                                    <div class="mt-2 flex items-center gap-4 text-sm text-gray-500">
+                                    <p class="font-medium text-gray-900 dark:text-white">{{ $question->question_text }}</p>
+                                    <div class="mt-2 flex items-center gap-4 text-sm text-gray-500 dark:text-gray-400">
                                         <span>{{ $question->votes->count() }} votes</span>
                                         @if(!$question->is_active)
                                             <span class="text-orange-500">Inactive</span>
@@ -147,7 +147,7 @@
                                 <div class="flex items-center gap-2">
                                     <button
                                         wire:click="toggleQuestion({{ $question->id }})"
-                                        class="text-gray-500 hover:text-gray-700 px-2 py-1 rounded transition"
+                                        class="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 px-2 py-1 rounded transition"
                                         title="{{ $question->is_active ? 'Deactivate' : 'Activate' }}"
                                     >
                                         {{ $question->is_active ? '👁️' : '👁️‍🗨️' }}
@@ -172,7 +172,7 @@
                             </div>
 
                             <!-- Answer Options Display -->
-                            <div class="mt-2 text-xs text-gray-500">
+                            <div class="mt-2 text-xs text-gray-500 dark:text-gray-400">
                                 Options: {{ implode(', ', $question->answer_choices) }}
                             </div>
 
@@ -181,13 +181,13 @@
                                 $hostVoted = $hostParticipant && $question->hasVoteFrom($hostParticipant);
                             @endphp
                             @if(!$hostVoted)
-                                <div class="mt-4 p-3 bg-blue-50 rounded-lg border border-blue-200">
-                                    <p class="text-sm text-blue-700 mb-2">Cast your vote:</p>
+                                <div class="mt-4 p-3 bg-blue-50 dark:bg-blue-900/20 rounded-lg border border-blue-200 dark:border-blue-800">
+                                    <p class="text-sm text-blue-700 dark:text-blue-300 mb-2">Cast your vote:</p>
                                     <div class="flex flex-wrap gap-2">
                                         @foreach($question->answer_choices as $option)
                                             <button
                                                 wire:click="vote({{ $question->id }}, '{{ addslashes($option) }}')"
-                                                class="px-4 py-2 text-sm rounded-lg border-2 border-blue-300 hover:border-blue-500 hover:bg-blue-500 hover:text-white text-blue-700 font-medium transition"
+                                                class="px-4 py-2 text-sm rounded-lg border-2 border-blue-300 dark:border-blue-700 hover:border-blue-500 hover:bg-blue-500 hover:text-white text-blue-700 dark:text-blue-300 font-medium transition"
                                             >
                                                 {{ $option }}
                                             </button>
@@ -195,7 +195,7 @@
                                     </div>
                                 </div>
                             @else
-                                <div class="mt-2 text-sm text-green-600">✓ You voted: {{ $question->getVoteFrom($hostParticipant)?->vote_value }}</div>
+                                <div class="mt-2 text-sm text-green-600 dark:text-green-400">✓ You voted: {{ $question->getVoteFrom($hostParticipant)?->vote_value }}</div>
                             @endif
 
                             <!-- Vote Distribution -->
@@ -205,8 +205,8 @@
                                 @endphp
                                 <div class="mt-4">
                                     @if($question->hasNumericOptions() && $question->vote_average !== null)
-                                        <div class="mb-3 p-2 bg-indigo-50 rounded-lg border border-indigo-200">
-                                            <span class="text-sm font-medium text-indigo-700">📊 Average: {{ $question->vote_average }}</span>
+                                        <div class="mb-3 p-2 bg-indigo-50 dark:bg-indigo-900/20 rounded-lg border border-indigo-200 dark:border-indigo-800">
+                                            <span class="text-sm font-medium text-indigo-700 dark:text-indigo-300">📊 Average: {{ $question->vote_average }}</span>
                                         </div>
                                     @endif
                                     <div class="flex flex-wrap items-end gap-2">
@@ -217,14 +217,14 @@
                                                 $voters = $votersByOption[$option] ?? [];
                                             @endphp
                                             <div class="flex-1 min-w-16 group relative">
-                                                <div class="text-center text-xs text-gray-500 mb-1 truncate" title="{{ $option }}">{{ Str::limit($option, 10) }}</div>
-                                                <div class="h-12 bg-gray-100 rounded relative overflow-hidden cursor-pointer">
+                                                <div class="text-center text-xs text-gray-500 dark:text-gray-400 mb-1 truncate" title="{{ $option }}">{{ Str::limit($option, 10) }}</div>
+                                                <div class="h-12 bg-gray-100 dark:bg-gray-700 rounded relative overflow-hidden cursor-pointer">
                                                     <div
                                                         class="absolute bottom-0 left-0 right-0 bg-primary transition-all duration-300 group-hover:bg-primary-dark"
                                                         style="height: {{ $percentage }}%"
                                                     ></div>
                                                 </div>
-                                                <div class="text-center text-xs text-gray-600 mt-1">{{ $count }}</div>
+                                                <div class="text-center text-xs text-gray-600 dark:text-gray-400 mt-1">{{ $count }}</div>
 
                                                 <!-- Hover tooltip showing voters -->
                                                 @if(count($voters) > 0)
@@ -247,35 +247,35 @@
                             @endif
                         </div>
                     @empty
-                        <p class="text-gray-500 text-center py-8">No questions yet. Add your first question above!</p>
+                        <p class="text-gray-500 dark:text-gray-400 text-center py-8">No questions yet. Add your first question above!</p>
                     @endforelse
                 </div>
             </div>
         </div>
 
         <!-- Participants Panel -->
-        <div class="bg-white rounded-2xl shadow-lg p-6 h-fit">
-            <h2 class="text-xl font-semibold text-gray-900 mb-4">Participants</h2>
+        <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-6 h-fit">
+            <h2 class="text-xl font-semibold text-gray-900 dark:text-white mb-4">Participants</h2>
             <div class="space-y-2 max-h-96 overflow-y-auto">
                 @forelse($participants as $participant)
-                    <div class="flex items-center justify-between gap-3 p-2 bg-gray-50 rounded-lg">
+                    <div class="flex items-center justify-between gap-3 p-2 bg-gray-50 dark:bg-gray-700/50 rounded-lg">
                         <div class="flex items-center gap-3">
                             <div class="w-8 h-8 bg-primary text-white rounded-full flex items-center justify-center text-sm font-medium">
                                 {{ strtoupper(substr($participant->username, 0, 1)) }}
                             </div>
-                            <span class="text-gray-700">{{ $participant->username }}</span>
+                            <span class="text-gray-700 dark:text-gray-300">{{ $participant->username }}</span>
                         </div>
                         <button
                             wire:click="kickParticipant({{ $participant->id }})"
                             wire:confirm="Kick {{ $participant->username }}? This will remove them and their votes."
-                            class="text-red-400 hover:text-red-600 hover:bg-red-50 px-2 py-1 rounded transition"
+                            class="text-red-400 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 px-2 py-1 rounded transition"
                             title="Kick participant"
                         >
                             🚫
                         </button>
                     </div>
                 @empty
-                    <p class="text-gray-500 text-center py-4">Waiting for participants...</p>
+                    <p class="text-gray-500 dark:text-gray-400 text-center py-4">Waiting for participants...</p>
                 @endforelse
             </div>
         </div>
