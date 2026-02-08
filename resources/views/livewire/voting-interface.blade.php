@@ -47,27 +47,51 @@
                                 <!-- Live Results -->
                                 @php
                                     $totalVotes = $question->votes->count();
+                                    $votersByOption = $session->show_hover_to_all ? $question->voters_by_option : [];
                                 @endphp
                                 @if($totalVotes > 0)
                                     <div class="mt-4">
                                         <p class="text-sm text-gray-500 mb-3">Live Results ({{ $totalVotes }} vote{{ $totalVotes !== 1 ? 's' : '' }})</p>
+
+                                        @if($session->show_average_to_all && $question->hasNumericOptions() && $question->vote_average !== null)
+                                            <div class="mb-3 p-2 bg-indigo-50 rounded-lg border border-indigo-200">
+                                                <span class="text-sm font-medium text-indigo-700">📊 Average: {{ $question->vote_average }}</span>
+                                            </div>
+                                        @endif
+
                                         <div class="space-y-2">
                                             @foreach($question->answer_choices as $option)
                                                 @php
                                                     $count = $question->votes->where('vote_value', $option)->count();
                                                     $percentage = $totalVotes > 0 ? round(($count / $totalVotes) * 100) : 0;
+                                                    $voters = $votersByOption[$option] ?? [];
                                                 @endphp
-                                                <div class="text-left">
+                                                <div class="text-left group relative">
                                                     <div class="flex justify-between text-sm mb-1">
                                                         <span class="text-gray-700">{{ $option }}</span>
                                                         <span class="text-gray-500">{{ $count }} ({{ $percentage }}%)</span>
                                                     </div>
-                                                    <div class="h-3 bg-gray-200 rounded-full overflow-hidden">
+                                                    <div class="h-3 bg-gray-200 rounded-full overflow-hidden cursor-pointer">
                                                         <div
-                                                            class="h-full bg-primary transition-all duration-500"
+                                                            class="h-full bg-primary transition-all duration-500 group-hover:bg-primary-dark"
                                                             style="width: {{ $percentage }}%"
                                                         ></div>
                                                     </div>
+
+                                                    <!-- Hover tooltip showing voters (only if enabled) -->
+                                                    @if($session->show_hover_to_all && count($voters) > 0)
+                                                        <div class="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 hidden group-hover:block z-10">
+                                                            <div class="bg-gray-900 text-white text-xs rounded-lg py-2 px-3 shadow-lg whitespace-nowrap max-w-48">
+                                                                <div class="font-medium mb-1 border-b border-gray-700 pb-1">Voted "{{ $option }}":</div>
+                                                                <div class="max-h-32 overflow-y-auto">
+                                                                    @foreach($voters as $voter)
+                                                                        <div class="py-0.5">{{ $voter }}</div>
+                                                                    @endforeach
+                                                                </div>
+                                                                <div class="absolute top-full left-1/2 -translate-x-1/2 border-4 border-transparent border-t-gray-900"></div>
+                                                            </div>
+                                                        </div>
+                                                    @endif
                                                 </div>
                                             @endforeach
                                         </div>

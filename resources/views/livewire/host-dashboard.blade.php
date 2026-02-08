@@ -44,6 +44,31 @@
                 </button>
             </div>
         </div>
+
+        <!-- Display Settings -->
+        <div class="mt-4 p-4 bg-blue-50 rounded-lg border border-blue-200">
+            <label class="block text-sm font-medium text-blue-700 mb-3">Display Settings for Participants</label>
+            <div class="flex flex-wrap gap-6">
+                <label class="flex items-center gap-2 cursor-pointer">
+                    <input
+                        type="checkbox"
+                        wire:click="toggleShowAverageToAll"
+                        {{ $session->show_average_to_all ? 'checked' : '' }}
+                        class="w-4 h-4 text-primary border-gray-300 rounded focus:ring-primary"
+                    >
+                    <span class="text-sm text-gray-700">Show average to all participants</span>
+                </label>
+                <label class="flex items-center gap-2 cursor-pointer">
+                    <input
+                        type="checkbox"
+                        wire:click="toggleShowHoverToAll"
+                        {{ $session->show_hover_to_all ? 'checked' : '' }}
+                        class="w-4 h-4 text-primary border-gray-300 rounded focus:ring-primary"
+                    >
+                    <span class="text-sm text-gray-700">Show voter names on hover to all</span>
+                </label>
+            </div>
+        </div>
     </div>
 
     <div class="grid lg:grid-cols-3 gap-6">
@@ -175,22 +200,46 @@
 
                             <!-- Vote Distribution -->
                             @if($question->votes->count() > 0)
+                                @php
+                                    $votersByOption = $question->voters_by_option;
+                                @endphp
                                 <div class="mt-4">
+                                    @if($question->hasNumericOptions() && $question->vote_average !== null)
+                                        <div class="mb-3 p-2 bg-indigo-50 rounded-lg border border-indigo-200">
+                                            <span class="text-sm font-medium text-indigo-700">📊 Average: {{ $question->vote_average }}</span>
+                                        </div>
+                                    @endif
                                     <div class="flex flex-wrap items-end gap-2">
                                         @foreach($question->answer_choices as $option)
                                             @php
                                                 $count = $question->votes->where('vote_value', $option)->count();
                                                 $percentage = $question->votes->count() > 0 ? ($count / $question->votes->count()) * 100 : 0;
+                                                $voters = $votersByOption[$option] ?? [];
                                             @endphp
-                                            <div class="flex-1 min-w-16">
+                                            <div class="flex-1 min-w-16 group relative">
                                                 <div class="text-center text-xs text-gray-500 mb-1 truncate" title="{{ $option }}">{{ Str::limit($option, 10) }}</div>
-                                                <div class="h-12 bg-gray-100 rounded relative overflow-hidden">
+                                                <div class="h-12 bg-gray-100 rounded relative overflow-hidden cursor-pointer">
                                                     <div
-                                                        class="absolute bottom-0 left-0 right-0 bg-primary transition-all duration-300"
+                                                        class="absolute bottom-0 left-0 right-0 bg-primary transition-all duration-300 group-hover:bg-primary-dark"
                                                         style="height: {{ $percentage }}%"
                                                     ></div>
                                                 </div>
                                                 <div class="text-center text-xs text-gray-600 mt-1">{{ $count }}</div>
+
+                                                <!-- Hover tooltip showing voters -->
+                                                @if(count($voters) > 0)
+                                                    <div class="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 hidden group-hover:block z-10">
+                                                        <div class="bg-gray-900 text-white text-xs rounded-lg py-2 px-3 shadow-lg whitespace-nowrap max-w-48">
+                                                            <div class="font-medium mb-1 border-b border-gray-700 pb-1">Voted "{{ $option }}":</div>
+                                                            <div class="max-h-32 overflow-y-auto">
+                                                                @foreach($voters as $voter)
+                                                                    <div class="py-0.5">{{ $voter }}</div>
+                                                                @endforeach
+                                                            </div>
+                                                            <div class="absolute top-full left-1/2 -translate-x-1/2 border-4 border-transparent border-t-gray-900"></div>
+                                                        </div>
+                                                    </div>
+                                                @endif
                                             </div>
                                         @endforeach
                                     </div>

@@ -125,6 +125,16 @@ class HostDashboard extends Component
         $question->update(['is_active' => ! $question->is_active]);
     }
 
+    public function toggleShowAverageToAll(): void
+    {
+        $this->session->update(['show_average_to_all' => ! $this->session->show_average_to_all]);
+    }
+
+    public function toggleShowHoverToAll(): void
+    {
+        $this->session->update(['show_hover_to_all' => ! $this->session->show_hover_to_all]);
+    }
+
     public function deleteQuestion(int $questionId): void
     {
         $this->session->questions()->where('id', $questionId)->delete();

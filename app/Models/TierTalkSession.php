@@ -15,11 +15,20 @@ class TierTalkSession extends Model
         'max_participants',
         'status',
         'expires_at',
+        'show_average_to_all',
+        'show_hover_to_all',
     ];
 
     protected $casts = [
         'expires_at' => 'datetime',
         'max_participants' => 'integer',
+        'show_average_to_all' => 'boolean',
+        'show_hover_to_all' => 'boolean',
+    ];
+
+    protected $attributes = [
+        'show_average_to_all' => true,
+        'show_hover_to_all' => false,
     ];
 
     protected static function booted(): void

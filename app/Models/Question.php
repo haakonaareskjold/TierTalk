@@ -65,4 +65,52 @@ class Question extends Model
     {
         $this->votes()->delete();
     }
+
+    /**
+     * Check if all answer options are numeric.
+     */
+    public function hasNumericOptions(): bool
+    {
+        foreach ($this->answer_choices as $option) {
+            if (! is_numeric($option)) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    /**
+     * Get the average of numeric votes.
+     */
+    public function getVoteAverageAttribute(): ?float
+    {
+        if (! $this->hasNumericOptions()) {
+            return null;
+        }
+
+        $votes = $this->votes;
+
+        if ($votes->isEmpty()) {
+            return null;
+        }
+
+        $sum = $votes->sum(fn ($vote) => (float) $vote->vote_value);
+
+        return round($sum / $votes->count(), 2);
+    }
+
+    /**
+     * Get votes grouped by value with participant information.
+     *
+     * @return array<string, array<int, string>>
+     */
+    public function getVotersByOptionAttribute(): array
+    {
+        return $this->votes
+            ->load('participant')
+            ->groupBy('vote_value')
+            ->map(fn ($votes) => $votes->pluck('participant.username')->toArray())
+            ->toArray();
+    }
 }
