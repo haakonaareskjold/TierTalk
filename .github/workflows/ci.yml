@@ -69,4 +69,4 @@ jobs:
     steps:
       - name: Deploy to Laravel Cloud
         run: |
-          curl -X POST "${{ secrets.CLOUD_STAGING_DEPLOYMENT_HOOK }}?commit_hash=${{ github.sha }}"
+          curl -X POST "${{ secrets.LARAVEL_CLOUD_DEPLOY_HOOK }}?commit_hash=${{ github.sha }}"
