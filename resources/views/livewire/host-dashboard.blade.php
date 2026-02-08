@@ -1,4 +1,4 @@
-<div class="space-y-6" wire:poll.5s>
+<div class="space-y-6">
     <!-- Session Info Header -->
     <div class="bg-white rounded-2xl shadow-lg p-6">
         <div class="flex flex-wrap items-center justify-between gap-4">

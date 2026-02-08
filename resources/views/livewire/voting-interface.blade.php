@@ -1,4 +1,4 @@
-<div class="px-4 py-8" wire:poll.5s>
+<div class="px-4 py-8">
     @if($sessionEnded)
         <div class="max-w-md mx-auto">
             <div class="bg-white rounded-2xl shadow-lg p-8 text-center">
