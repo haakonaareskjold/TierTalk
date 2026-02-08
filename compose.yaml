@@ -46,7 +46,6 @@ services:
             - sail
         depends_on:
             - mysql
-            - reverb
 
     mysql:
         image: 'mysql:8.4'
