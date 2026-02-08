@@ -13,21 +13,6 @@
 
     <!-- Scripts -->
     @vite(['resources/js/app.js', 'resources/css/app.css'])
-    <!-- Styles -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        primary: '#6366f1',
-                        'primary-dark': '#4f46e5',
-                    }
-                }
-            }
-        }
-    </script>
-
     @livewireStyles
 </head>
 <body class="font-sans antialiased bg-gray-100 min-h-screen">
