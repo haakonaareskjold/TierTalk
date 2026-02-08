@@ -13,7 +13,9 @@ class CreateSession extends Component
 {
     public string $title = '';
 
-    public int $maxParticipants = 20;
+    public string $username = '';
+
+    public int $maxParticipants = 8;
 
     public int $expirationHours = 1;
 
@@ -33,6 +35,7 @@ class CreateSession extends Component
     {
         return [
             'title' => 'nullable|string|max:255',
+            'username' => 'string|max:60',
             'maxParticipants' => 'required|integer|min:2|max:100',
             'expirationHours' => 'required|integer|min:1|max:24',
             'questions' => 'required|array|min:1',
@@ -82,6 +85,7 @@ class CreateSession extends Component
 
         $session = TierTalkSession::create([
             'title' => $this->title ?: 'TierTalk Session',
+            'username' => $this->username,
             'max_participants' => $this->maxParticipants,
             'expires_at' => now()->addHours($this->expirationHours),
         ]);

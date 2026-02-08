@@ -39,11 +39,6 @@
                         🗣️ TierTalk
                     </a>
                 </div>
-                <div class="flex items-center">
-                    <a href="{{ route('session.create') }}" class="bg-primary hover:bg-primary-dark text-white px-4 py-2 rounded-lg transition">
-                        Start Session
-                    </a>
-                </div>
             </div>
         </div>
     </nav>

@@ -12,6 +12,7 @@ class TierTalkSession extends Model
         'host_token',
         'slug',
         'title',
+        'username',
         'max_participants',
         'status',
         'expires_at',

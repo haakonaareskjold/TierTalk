@@ -19,6 +19,20 @@
                     @error('title') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
                 </div>
 
+                <div>
+                    <label for="username" class="block text-sm font-medium text-gray-700 mb-1">
+                        Username
+                    </label>
+                    <input
+                        type="text"
+                        id="username"
+                        wire:model="username"
+                        placeholder="e.g., John doe"
+                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
+                    >
+                    @error('username') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
+                </div>
+
                 <!-- Questions -->
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-2">
@@ -107,7 +121,7 @@
                         id="maxParticipants"
                         wire:model="maxParticipants"
                         min="2"
-                        max="100"
+                        max="50"
                         class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
                     >
                     @error('maxParticipants') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
