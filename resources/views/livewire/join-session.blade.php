@@ -1,24 +1,24 @@
 <div class="px-4 py-12">
     <div class="max-w-md mx-auto">
-        <div class="bg-white rounded-2xl shadow-lg p-8 text-center">
+        <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-8 text-center">
             @if($sessionExpired)
                 <div class="text-6xl mb-4">⏰</div>
-                <h1 class="text-2xl font-bold text-gray-900 mb-2">Session Expired</h1>
-                <p class="text-gray-600 mb-6">This TierTalk session has ended.</p>
+                <h1 class="text-2xl font-bold text-gray-900 dark:text-white mb-2">Session Expired</h1>
+                <p class="text-gray-600 dark:text-gray-400 mb-6">This TierTalk session has ended.</p>
                 <a href="{{ route('home') }}" class="inline-block bg-primary hover:bg-primary-dark text-white px-6 py-3 rounded-lg transition">
                     Go Home
                 </a>
             @elseif($sessionFull)
                 <div class="text-6xl mb-4">🚫</div>
-                <h1 class="text-2xl font-bold text-gray-900 mb-2">Session Full</h1>
-                <p class="text-gray-600 mb-6">This session has reached its maximum number of participants.</p>
+                <h1 class="text-2xl font-bold text-gray-900 dark:text-white mb-2">Session Full</h1>
+                <p class="text-gray-600 dark:text-gray-400 mb-6">This session has reached its maximum number of participants.</p>
                 <a href="{{ route('home') }}" class="inline-block bg-primary hover:bg-primary-dark text-white px-6 py-3 rounded-lg transition">
                     Go Home
                 </a>
             @else
                 <div class="text-6xl mb-4">🗣️</div>
-                <h1 class="text-2xl font-bold text-gray-900 mb-2">{{ $session->title }}</h1>
-                <p class="text-gray-600 mb-6">Enter your name to join this session and start voting!</p>
+                <h1 class="text-2xl font-bold text-gray-900 dark:text-white mb-2">{{ $session->title }}</h1>
+                <p class="text-gray-600 dark:text-gray-400 mb-6">Enter your name to join this session and start voting!</p>
 
                 <form wire:submit="join" class="space-y-4">
                     <div>
@@ -26,7 +26,7 @@
                             type="text"
                             wire:model="username"
                             placeholder="Your name"
-                            class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent text-center text-lg"
+                            class="w-full px-4 py-3 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent text-center text-lg text-gray-900 dark:text-white placeholder-gray-400"
                             autofocus
                         >
                         @error('username') <span class="text-red-500 text-sm mt-1 block">{{ $message }}</span> @enderror
@@ -40,7 +40,7 @@
                     </button>
                 </form>
 
-                <p class="text-gray-400 text-sm mt-4">
+                <p class="text-gray-400 dark:text-gray-500 text-sm mt-4">
                     {{ $session->participants()->count() }}/{{ $session->max_participants }} participants joined
                 </p>
             @endif
