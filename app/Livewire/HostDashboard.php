@@ -173,6 +173,18 @@ class HostDashboard extends Component
         $this->session->refresh();
     }
 
+    #[On('echo:session.{session.id},QuestionAdded')]
+    public function refreshOnQuestionAdded(): void
+    {
+        $this->session->refresh();
+    }
+
+    #[On('echo:session.{session.id},QuestionReset')]
+    public function refreshOnQuestionReset(): void
+    {
+        $this->session->refresh();
+    }
+
     public function render()
     {
         return view('livewire.host-dashboard', [
