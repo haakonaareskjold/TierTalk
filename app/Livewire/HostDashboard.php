@@ -4,8 +4,11 @@ namespace App\Livewire;
 
 use App\Events\ParticipantKicked;
 use App\Events\QuestionAdded;
+use App\Events\QuestionDeleted;
 use App\Events\QuestionReset;
+use App\Events\QuestionToggled;
 use App\Events\SessionEnded;
+use App\Events\SessionUpdated;
 use App\Events\VoteCast;
 use App\Models\Participant;
 use App\Models\TierTalkSession;
@@ -117,21 +120,29 @@ class HostDashboard extends Component
     {
         $question = $this->session->questions()->findOrFail($questionId);
         $question->update(['is_active' => ! $question->is_active]);
+
+        QuestionToggled::dispatch($this->session, $question);
     }
 
     public function toggleShowAverageToAll(): void
     {
         $this->session->update(['show_average_to_all' => ! $this->session->show_average_to_all]);
+
+        SessionUpdated::dispatch($this->session);
     }
 
     public function toggleShowHoverToAll(): void
     {
         $this->session->update(['show_hover_to_all' => ! $this->session->show_hover_to_all]);
+
+        SessionUpdated::dispatch($this->session);
     }
 
     public function deleteQuestion(int $questionId): void
     {
         $this->session->questions()->where('id', $questionId)->delete();
+
+        QuestionDeleted::dispatch($this->session, $questionId);
     }
 
     public function kickParticipant(int $participantId): void
@@ -157,6 +168,24 @@ class HostDashboard extends Component
 
     #[On('echo:session.{session.id},VoteCast')]
     public function refreshVotes(): void
+    {
+        $this->session->refresh();
+    }
+
+    #[On('echo:session.{session.id},SessionUpdated')]
+    public function refreshOnSessionUpdated(): void
+    {
+        $this->session->refresh();
+    }
+
+    #[On('echo:session.{session.id},QuestionToggled')]
+    public function refreshOnQuestionToggled(): void
+    {
+        $this->session->refresh();
+    }
+
+    #[On('echo:session.{session.id},QuestionDeleted')]
+    public function refreshOnQuestionDeleted(): void
     {
         $this->session->refresh();
     }

@@ -70,6 +70,24 @@ class VotingInterface extends Component
         $this->session->refresh();
     }
 
+    #[On('echo:session.{session.id},SessionUpdated')]
+    public function onSessionUpdated(): void
+    {
+        $this->session->refresh();
+    }
+
+    #[On('echo:session.{session.id},QuestionToggled')]
+    public function onQuestionToggled(): void
+    {
+        $this->session->refresh();
+    }
+
+    #[On('echo:session.{session.id},QuestionDeleted')]
+    public function onQuestionDeleted(): void
+    {
+        $this->session->refresh();
+    }
+
     #[On('echo:session.{session.id},QuestionReset')]
     public function onQuestionReset(array $data): void
     {
