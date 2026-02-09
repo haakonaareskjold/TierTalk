@@ -16,8 +16,7 @@
                     {{ $participants->count() }}/{{ $session->max_participants }} Participants
                 </span>
                 <button
-                    wire:click="endSession"
-                    wire:confirm="Are you sure you want to end this session?"
+                    wire:click="confirmEndSession"
                     class="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg transition"
                 >
                     End Session
@@ -146,23 +145,21 @@
                                 </div>
                                 <div class="flex items-center gap-2">
                                     <button
-                                        wire:click="toggleQuestion({{ $question->id }})"
+                                        wire:click="confirmToggle({{ $question->id }})"
                                         class="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 px-2 py-1 rounded transition"
                                         title="{{ $question->is_active ? 'Deactivate' : 'Activate' }}"
                                     >
                                         {{ $question->is_active ? '👁️' : '👁️‍🗨️' }}
                                     </button>
                                     <button
-                                        wire:click="resetQuestion({{ $question->id }})"
-                                        wire:confirm="Reset all votes for this question?"
+                                        wire:click="confirmReset({{ $question->id }})"
                                         class="text-orange-500 hover:text-orange-700 px-2 py-1 rounded transition"
                                         title="Reset votes"
                                     >
                                         🔄
                                     </button>
                                     <button
-                                        wire:click="deleteQuestion({{ $question->id }})"
-                                        wire:confirm="Delete this question?"
+                                        wire:click="confirmDelete({{ $question->id }})"
                                         class="text-red-500 hover:text-red-700 px-2 py-1 rounded transition"
                                         title="Delete"
                                     >
@@ -266,8 +263,7 @@
                             <span class="text-gray-700 dark:text-gray-300">{{ $participant->username }}</span>
                         </div>
                         <button
-                            wire:click="kickParticipant({{ $participant->id }})"
-                            wire:confirm="Kick {{ $participant->username }}? This will remove them and their votes."
+                            wire:click="confirmKickParticipant({{ $participant->id }})"
                             class="text-red-400 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 px-2 py-1 rounded transition"
                             title="Kick participant"
                         >
@@ -280,4 +276,92 @@
             </div>
         </div>
     </div>
+
+    <!-- Confirmation Modal -->
+    @if($confirmingAction)
+        <div class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-gray-900/50 backdrop-blur-sm" wire:click.self="cancelConfirmation">
+            <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-xl max-w-md w-full overflow-hidden animate-in fade-in zoom-in duration-200">
+                <div class="p-6">
+                    <div class="flex items-center gap-3 mb-4">
+                        <div class="p-2 rounded-full {{ in_array($confirmingAction, ['delete', 'kick', 'endSession']) ? 'bg-red-100 dark:bg-red-900/30 text-red-600 dark:text-red-400' : ($confirmingAction === 'reset' ? 'bg-orange-100 dark:bg-orange-900/30 text-orange-600 dark:text-orange-400' : 'bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400') }}">
+                            @if($confirmingAction === 'delete')
+                                🗑️
+                            @elseif($confirmingAction === 'reset')
+                                🔄
+                            @elseif($confirmingAction === 'kick')
+                                🚫
+                            @elseif($confirmingAction === 'endSession')
+                                🛑
+                            @else
+                                👁️
+                            @endif
+                        </div>
+                        <h3 class="text-xl font-bold text-gray-900 dark:text-white">
+                            @if($confirmingAction === 'toggle')
+                                {{ $questions->find($confirmingId)?->is_active ? 'Deactivate' : 'Activate' }} Question
+                            @elseif($confirmingAction === 'reset')
+                                Reset Question
+                            @elseif($confirmingAction === 'delete')
+                                Delete Question
+                            @elseif($confirmingAction === 'kick')
+                                Kick Participant
+                            @elseif($confirmingAction === 'endSession')
+                                End Session
+                            @endif
+                        </h3>
+                    </div>
+
+                    <p class="text-gray-600 dark:text-gray-400 mb-6">
+                        @if($confirmingAction === 'toggle')
+                            Are you sure you want to {{ $questions->find($confirmingId)?->is_active ? 'deactivate' : 'activate' }} this question?
+                            @if($questions->find($confirmingId)?->is_active)
+                                Participants will no longer be able to see or vote on it.
+                            @else
+                                Participants will be able to see and vote on it again.
+                            @endif
+                        @elseif($confirmingAction === 'reset')
+                            Are you sure you want to reset all votes for this question? This action cannot be undone.
+                        @elseif($confirmingAction === 'delete')
+                            Are you sure you want to delete this question? This action cannot be undone.
+                        @elseif($confirmingAction === 'kick')
+                            Are you sure you want to kick {{ $participants->find($confirmingId)?->username }}? This will remove them and their votes.
+                        @elseif($confirmingAction === 'endSession')
+                            Are you sure you want to end this session? This will redirect you to the home page.
+                        @endif
+                    </p>
+
+                    <div class="flex justify-end gap-3">
+                        <button
+                            wire:click="cancelConfirmation"
+                            class="px-4 py-2 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition font-medium"
+                        >
+                            Cancel
+                        </button>
+                        @if(in_array($confirmingAction, ['toggle', 'reset', 'delete']))
+                            <button
+                                wire:click="{{ $confirmingAction }}Question({{ $confirmingId }})"
+                                class="px-4 py-2 {{ $confirmingAction === 'delete' ? 'bg-red-500 hover:bg-red-600' : ($confirmingAction === 'reset' ? 'bg-orange-500 hover:bg-orange-600' : 'bg-primary hover:bg-primary-dark') }} text-white rounded-lg transition font-medium"
+                            >
+                                Confirm
+                            </button>
+                        @elseif($confirmingAction === 'kick')
+                            <button
+                                wire:click="kickParticipant({{ $confirmingId }})"
+                                class="px-4 py-2 bg-red-500 hover:bg-red-600 text-white rounded-lg transition font-medium"
+                            >
+                                Confirm Kick
+                            </button>
+                        @elseif($confirmingAction === 'endSession')
+                            <button
+                                wire:click="endSession"
+                                class="px-4 py-2 bg-red-500 hover:bg-red-600 text-white rounded-lg transition font-medium"
+                            >
+                                Confirm End Session
+                            </button>
+                        @endif
+                    </div>
+                </div>
+            </div>
+        </div>
+    @endif
 </div>
