@@ -23,6 +23,10 @@ class HostDashboard extends Component
 
     public ?Participant $hostParticipant = null;
 
+    public ?int $confirmingId = null;
+
+    public ?string $confirmingAction = null;
+
     /**
      * @var array<int, string>
      */
@@ -108,12 +112,26 @@ class HostDashboard extends Component
         $this->newOptions = ['Yes', 'No'];
     }
 
+    public function confirmReset(int $questionId): void
+    {
+        $this->confirmingId = $questionId;
+        $this->confirmingAction = 'reset';
+    }
+
     public function resetQuestion(int $questionId): void
     {
         $question = $this->session->questions()->findOrFail($questionId);
         $question->resetVotes();
 
         QuestionReset::dispatch($this->session, $question);
+
+        $this->cancelConfirmation();
+    }
+
+    public function confirmToggle(int $questionId): void
+    {
+        $this->confirmingId = $questionId;
+        $this->confirmingAction = 'toggle';
     }
 
     public function toggleQuestion(int $questionId): void
@@ -122,6 +140,8 @@ class HostDashboard extends Component
         $question->update(['is_active' => ! $question->is_active]);
 
         QuestionToggled::dispatch($this->session, $question);
+
+        $this->cancelConfirmation();
     }
 
     public function toggleShowAverageToAll(): void
@@ -138,11 +158,31 @@ class HostDashboard extends Component
         SessionUpdated::dispatch($this->session);
     }
 
+    public function confirmDelete(int $questionId): void
+    {
+        $this->confirmingId = $questionId;
+        $this->confirmingAction = 'delete';
+    }
+
     public function deleteQuestion(int $questionId): void
     {
         $this->session->questions()->where('id', $questionId)->delete();
 
         QuestionDeleted::dispatch($this->session, $questionId);
+
+        $this->cancelConfirmation();
+    }
+
+    public function confirmKickParticipant(int $participantId): void
+    {
+        $this->confirmingId = $participantId;
+        $this->confirmingAction = 'kick';
+    }
+
+    public function cancelConfirmation(): void
+    {
+        $this->confirmingId = null;
+        $this->confirmingAction = null;
     }
 
     public function kickParticipant(int $participantId): void
@@ -155,6 +195,13 @@ class HostDashboard extends Component
         $participant->delete();
 
         ParticipantKicked::dispatch($this->session, $participantId, $token);
+
+        $this->cancelConfirmation();
+    }
+
+    public function confirmEndSession(): void
+    {
+        $this->confirmingAction = 'endSession';
     }
 
     public function endSession(): void
@@ -162,6 +209,8 @@ class HostDashboard extends Component
         $this->session->update(['status' => 'ended']);
 
         SessionEnded::dispatch($this->session);
+
+        $this->cancelConfirmation();
 
         $this->redirect(route('home'));
     }
