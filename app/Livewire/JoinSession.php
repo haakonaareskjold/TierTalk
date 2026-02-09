@@ -36,7 +36,7 @@ class JoinSession extends Component
 
         // Check if username is already taken in this session
         $exists = $this->session->participants()
-            ->where('username', $this->username)
+            ->where('username', mb_strtolower($this->username))
             ->exists();
 
         if ($exists) {
