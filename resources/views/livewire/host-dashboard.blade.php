@@ -262,13 +262,15 @@
                             </div>
                             <span class="text-gray-700 dark:text-gray-300">{{ $participant->username }}</span>
                         </div>
-                        <button
-                            wire:click="confirmKickParticipant({{ $participant->id }})"
-                            class="text-red-400 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 px-2 py-1 rounded transition"
-                            title="Kick participant"
-                        >
-                            🚫
-                        </button>
+                        @unless($hostParticipant->id === $participant->id)
+                            <button
+                                wire:click="confirmKickParticipant({{ $participant->id }})"
+                                class="text-red-400 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 px-2 py-1 rounded transition"
+                                title="Kick participant"
+                            >
+                                🚫
+                            </button>
+                        @endunless
                     </div>
                 @empty
                     <p class="text-gray-500 dark:text-gray-400 text-center py-4">Waiting for participants...</p>
