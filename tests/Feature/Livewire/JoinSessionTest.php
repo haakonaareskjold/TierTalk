@@ -8,7 +8,7 @@ use Illuminate\Support\Facades\Event;
 use Livewire\Livewire;
 
 /**
- * @param array<string, mixed> $attributes
+ * @param  array<string, mixed>  $attributes
  */
 function createActiveSession(array $attributes = []): TierTalkSession
 {
