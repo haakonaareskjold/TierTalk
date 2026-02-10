@@ -32,7 +32,7 @@ class ParticipantKicked implements ShouldBroadcastNow
     /**
      * @return array<string, mixed>
      */
-        /**
+    /**
      * @return array<string, mixed>
      */
     public function broadcastWith(): array

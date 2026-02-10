@@ -10,8 +10,8 @@ use Illuminate\Support\Facades\Event;
 use Livewire\Livewire;
 
 /**
- * @param array<string, mixed> $sessionAttrs
- * @param array<string, mixed> $questionAttrs
+ * @param  array<string, mixed>  $sessionAttrs
+ * @param  array<string, mixed>  $questionAttrs
  * @return array{0: TierTalkSession, 1: Question}
  */
 function createSessionWithQuestion(array $sessionAttrs = [], array $questionAttrs = []): array

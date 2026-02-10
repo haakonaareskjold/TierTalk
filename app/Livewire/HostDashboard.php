@@ -41,7 +41,7 @@ class HostDashboard extends Component
     protected function ensureHostParticipant(): void
     {
         $this->hostParticipant = $this->session->participants()->createOrFirst([
-                'username' => $this->session->username,
+            'username' => $this->session->username,
         ]);
     }
 

@@ -2,6 +2,8 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\MassPrunable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Str;
@@ -26,6 +28,8 @@ use Illuminate\Support\Str;
  */
 class TierTalkSession extends Model
 {
+    use MassPrunable;
+
     protected $fillable = [
         'host_token',
         'slug',
@@ -101,5 +105,15 @@ class TierTalkSession extends Model
     public function getHostUrlAttribute(): string
     {
         return route('session.host', ['slug' => $this->slug, 'token' => $this->host_token]);
+    }
+
+    /**
+     * Get the prunable model query.
+     *
+     * @return \Illuminate\Database\Eloquent\Builder<self>
+     */
+    public function prunable(): Builder
+    {
+        return static::where('expires_at', '<=', now()->minus(days: 1));
     }
 }

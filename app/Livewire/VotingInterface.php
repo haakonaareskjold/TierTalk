@@ -89,7 +89,7 @@ class VotingInterface extends Component
     }
 
     /**
-     * @param array<string, mixed> $data
+     * @param  array<string, mixed>  $data
      */
     #[On('echo:session.{session.id},QuestionReset')]
     public function onQuestionReset(array $data): void
@@ -111,7 +111,7 @@ class VotingInterface extends Component
     }
 
     /**
-     * @param array{participant_token: string} $data
+     * @param  array{participant_token: string}  $data
      */
     #[On('echo:session.{session.id},ParticipantKicked')]
     public function onParticipantKicked(array $data): void
