@@ -26,6 +26,9 @@ class ParticipantJoined implements ShouldBroadcastNow
         ];
     }
 
+        /**
+     * @return array<string, mixed>
+     */
     public function broadcastWith(): array
     {
         return [

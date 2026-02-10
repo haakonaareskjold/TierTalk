@@ -7,6 +7,16 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Str;
 
+/**
+ * @property int $id
+ * @property int $tier_talk_session_id
+ * @property string $username
+ * @property string $token
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read \App\Models\TierTalkSession $tierTalkSession
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Vote> $votes
+ */
 class Participant extends Model
 {
     protected $fillable = [
@@ -24,11 +34,17 @@ class Participant extends Model
         });
     }
 
+    /**
+     * @return BelongsTo<TierTalkSession, $this>
+     */
     public function tierTalkSession(): BelongsTo
     {
         return $this->belongsTo(TierTalkSession::class);
     }
 
+    /**
+     * @return HasMany<Vote, $this>
+     */
     public function votes(): HasMany
     {
         return $this->hasMany(Vote::class);

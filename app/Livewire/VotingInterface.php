@@ -88,6 +88,9 @@ class VotingInterface extends Component
         $this->session->refresh();
     }
 
+    /**
+     * @param array<string, mixed> $data
+     */
     #[On('echo:session.{session.id},QuestionReset')]
     public function onQuestionReset(array $data): void
     {
@@ -107,12 +110,16 @@ class VotingInterface extends Component
         $this->session->refresh();
     }
 
+    /**
+     * @param array{participant_token: string} $data
+     */
     #[On('echo:session.{session.id},ParticipantKicked')]
     public function onParticipantKicked(array $data): void
     {
         // Check if the kicked participant is the current user
         $myToken = session('participant_token');
-        if ($myToken && isset($data['participant_token']) && $data['participant_token'] === $myToken) {
+        /** @var string|null $myToken */
+        if ($myToken && $data['participant_token'] === $myToken) {
             // Clear participant session and redirect to join page
             session()->forget('participant_token');
             $this->participant = null;
@@ -120,7 +127,7 @@ class VotingInterface extends Component
         }
     }
 
-    public function render()
+    public function render(): \Illuminate\View\View
     {
         $questions = $this->session->questions()
             ->with('votes')
@@ -135,9 +142,12 @@ class VotingInterface extends Component
                 ->toArray();
         }
 
-        return view('livewire.voting-interface', [
+        /** @var \Illuminate\View\View $view */
+        $view = view('livewire.voting-interface', [
             'questions' => $questions,
             'votedQuestionIds' => $votedQuestionIds,
         ]);
+
+        return $view;
     }
 }

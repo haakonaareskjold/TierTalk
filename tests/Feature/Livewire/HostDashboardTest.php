@@ -13,6 +13,9 @@ use App\Models\Vote;
 use Illuminate\Support\Facades\Event;
 use Livewire\Livewire;
 
+/**
+ * @param array<string, mixed> $attributes
+ */
 function createHostSession(array $attributes = []): TierTalkSession
 {
     return TierTalkSession::create(array_merge([

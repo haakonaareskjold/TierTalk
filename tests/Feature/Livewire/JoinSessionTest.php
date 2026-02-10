@@ -7,6 +7,9 @@ use App\Models\TierTalkSession;
 use Illuminate\Support\Facades\Event;
 use Livewire\Livewire;
 
+/**
+ * @param array<string, mixed> $attributes
+ */
 function createActiveSession(array $attributes = []): TierTalkSession
 {
     return TierTalkSession::create(array_merge([

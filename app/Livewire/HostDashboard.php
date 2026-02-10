@@ -98,7 +98,8 @@ class HostDashboard extends Component
             'newOptions.*' => 'required|string|min:1|max:100',
         ]);
 
-        $maxOrder = $this->session->questions()->max('order') ?? -1;
+        $maxOrder = $this->session->questions()->max('order');
+        $maxOrder = is_numeric($maxOrder) ? (int) $maxOrder : -1;
 
         $question = $this->session->questions()->create([
             'question_text' => $this->newQuestion,
@@ -257,12 +258,15 @@ class HostDashboard extends Component
         $this->session->refresh();
     }
 
-    public function render()
+    public function render(): \Illuminate\View\View
     {
-        return view('livewire.host-dashboard', [
+        /** @var \Illuminate\View\View $view */
+        $view = view('livewire.host-dashboard', [
             'questions' => $this->session->questions()->with('votes')->get(),
             'participants' => $this->session->participants,
             'hostParticipant' => $this->hostParticipant,
         ]);
+
+        return $view;
     }
 }
