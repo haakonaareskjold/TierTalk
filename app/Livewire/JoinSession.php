@@ -64,8 +64,11 @@ class JoinSession extends Component
         $this->redirect(route('session.vote', $this->session->slug));
     }
 
-    public function render()
+    public function render(): \Illuminate\View\View
     {
-        return view('livewire.join-session');
+        /** @var \Illuminate\View\View $view */
+        $view = view('livewire.join-session');
+
+        return $view;
     }
 }

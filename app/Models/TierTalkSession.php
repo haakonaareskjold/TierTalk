@@ -6,6 +6,24 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Str;
 
+/**
+ * @property int $id
+ * @property string $host_token
+ * @property string $slug
+ * @property string|null $title
+ * @property int $max_participants
+ * @property string $status
+ * @property \Illuminate\Support\Carbon $expires_at
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property bool $show_average_to_all
+ * @property bool $show_hover_to_all
+ * @property string|null $username
+ * @property-read string $share_url
+ * @property-read string $host_url
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Question> $questions
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Participant> $participants
+ */
 class TierTalkSession extends Model
 {
     protected $fillable = [
@@ -44,11 +62,17 @@ class TierTalkSession extends Model
         });
     }
 
+    /**
+     * @return HasMany<Question, $this>
+     */
     public function questions(): HasMany
     {
         return $this->hasMany(Question::class)->orderBy('order');
     }
 
+    /**
+     * @return HasMany<Participant, $this>
+     */
     public function participants(): HasMany
     {
         return $this->hasMany(Participant::class);

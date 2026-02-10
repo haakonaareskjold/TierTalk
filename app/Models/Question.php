@@ -6,6 +6,22 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
+/**
+ * @property int $id
+ * @property int $tier_talk_session_id
+ * @property string $question_text
+ * @property bool $is_active
+ * @property int $order
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property array<int, string>|null $answer_options
+ * @property-read array<int, string> $answer_choices
+ * @property-read array<string, int> $vote_counts
+ * @property-read float|null $vote_average
+ * @property-read array<string, array<int, string>> $voters_by_option
+ * @property-read \App\Models\TierTalkSession $tierTalkSession
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Vote> $votes
+ */
 class Question extends Model
 {
     protected $fillable = [
@@ -32,23 +48,35 @@ class Question extends Model
         return $this->answer_options ?? ['1', '2', '3', '4', '5'];
     }
 
+    /**
+     * @return BelongsTo<TierTalkSession, $this>
+     */
     public function tierTalkSession(): BelongsTo
     {
         return $this->belongsTo(TierTalkSession::class);
     }
 
+    /**
+     * @return HasMany<Vote, $this>
+     */
     public function votes(): HasMany
     {
         return $this->hasMany(Vote::class);
     }
 
+    /**
+     * @return array<string, int>
+     */
     public function getVoteCountsAttribute(): array
     {
-        return $this->votes()
+        /** @var array<string, int> $counts */
+        $counts = $this->votes()
             ->selectRaw('vote_value, COUNT(*) as count')
             ->groupBy('vote_value')
             ->pluck('count', 'vote_value')
             ->toArray();
+
+        return $counts;
     }
 
     public function hasVoteFrom(Participant $participant): bool
@@ -107,10 +135,13 @@ class Question extends Model
      */
     public function getVotersByOptionAttribute(): array
     {
-        return $this->votes
+        /** @var array<string, array<int, string>> $voters */
+        $voters = $this->votes
             ->load('participant')
             ->groupBy('vote_value')
             ->map(fn ($votes) => $votes->pluck('participant.username')->toArray())
             ->toArray();
+
+        return $voters;
     }
 }

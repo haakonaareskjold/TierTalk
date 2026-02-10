@@ -3,11 +3,17 @@
 use App\Events\VoteCast;
 use App\Livewire\VotingInterface;
 use App\Models\Participant;
+use App\Models\Question;
 use App\Models\TierTalkSession;
 use App\Models\Vote;
 use Illuminate\Support\Facades\Event;
 use Livewire\Livewire;
 
+/**
+ * @param array<string, mixed> $sessionAttrs
+ * @param array<string, mixed> $questionAttrs
+ * @return array{0: TierTalkSession, 1: Question}
+ */
 function createSessionWithQuestion(array $sessionAttrs = [], array $questionAttrs = []): array
 {
     $session = TierTalkSession::create(array_merge([

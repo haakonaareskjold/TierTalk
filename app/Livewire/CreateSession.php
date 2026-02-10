@@ -24,6 +24,17 @@ class CreateSession extends Component
      */
     public array $questions = [];
 
+    /**
+     * @var array<string, string>
+     */
+    protected $messages = [
+        'questions.*.text.required' => 'Each question is required.',
+        'questions.*.text.min' => 'Each question must be at least 3 characters.',
+        'questions.*.options.required' => 'Each question needs at least 2 answer options.',
+        'questions.*.options.min' => 'Each question needs at least 2 answer options.',
+        'questions.*.options.*.required' => 'Answer option cannot be empty.',
+    ];
+
     public function mount(): void
     {
         $this->questions = [
@@ -31,6 +42,9 @@ class CreateSession extends Component
         ];
     }
 
+    /**
+     * @return array<string, string>
+     */
     protected function rules(): array
     {
         return [
@@ -44,14 +58,6 @@ class CreateSession extends Component
             'questions.*.options.*' => 'required|string|min:1|max:100',
         ];
     }
-
-    protected $messages = [
-        'questions.*.text.required' => 'Each question is required.',
-        'questions.*.text.min' => 'Each question must be at least 3 characters.',
-        'questions.*.options.required' => 'Each question needs at least 2 answer options.',
-        'questions.*.options.min' => 'Each question needs at least 2 answer options.',
-        'questions.*.options.*.required' => 'Answer option cannot be empty.',
-    ];
 
     public function addQuestion(): void
     {
@@ -104,8 +110,11 @@ class CreateSession extends Component
         ]));
     }
 
-    public function render()
+    public function render(): \Illuminate\View\View
     {
-        return view('livewire.create-session');
+        /** @var \Illuminate\View\View $view */
+        $view = view('livewire.create-session');
+
+        return $view;
     }
 }
