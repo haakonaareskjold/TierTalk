@@ -3,9 +3,11 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\MassPrunable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Str;
 
 /**
@@ -15,16 +17,16 @@ use Illuminate\Support\Str;
  * @property string|null $title
  * @property int $max_participants
  * @property string $status
- * @property \Illuminate\Support\Carbon $expires_at
- * @property \Illuminate\Support\Carbon|null $created_at
- * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property Carbon $expires_at
+ * @property Carbon|null $created_at
+ * @property Carbon|null $updated_at
  * @property bool $show_average_to_all
  * @property bool $show_hover_to_all
  * @property string|null $username
  * @property-read string $share_url
  * @property-read string $host_url
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Question> $questions
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Participant> $participants
+ * @property-read Collection<int, Question> $questions
+ * @property-read Collection<int, Participant> $participants
  */
 class TierTalkSession extends Model
 {
@@ -110,7 +112,7 @@ class TierTalkSession extends Model
     /**
      * Get the prunable model query.
      *
-     * @return \Illuminate\Database\Eloquent\Builder<self>
+     * @return Builder<self>
      */
     public function prunable(): Builder
     {
