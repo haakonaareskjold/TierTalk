@@ -17,7 +17,7 @@ A real-time voting and feedback application built with Laravel, Livewire, and La
 - **Frontend**: Livewire 4
 - **Database**: MySQL
 - **Real-time**: Laravel Reverb (WebSockets)
-- **Styling**: Tailwind CSS (via CDN)
+- **Styling**: Tailwind CSS
 
 ## Installation
 
