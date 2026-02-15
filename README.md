@@ -23,9 +23,9 @@ A real-time voting and feedback application built with Laravel, Livewire, and La
 
 ### Prerequisites
 
-- PHP 8.2+
+- PHP 8.5
 - Composer
-- MySQL
+- Database (Tested with Mysql8 and Postgres 18)
 - Node.js (for Reverb)
 
 ### Setup
