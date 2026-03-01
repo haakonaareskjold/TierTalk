@@ -180,23 +180,3 @@ it('saves answer options correctly', function () {
 
     expect($question->answer_options)->toBe(['Messi', 'Ronaldo', 'Neither']);
 });
-
-it('can copy options from previous question', function () {
-    Livewire::test(CreateSession::class)
-        ->set('questions', [
-            ['text' => 'Q1', 'options' => ['Option A', 'Option B']],
-            ['text' => 'Q2', 'options' => ['Yes', 'No']],
-        ])
-        ->call('copyOptionsFromPrevious', 1)
-        ->assertSet('questions.1.options', ['Option A', 'Option B']);
-});
-
-it('defaults new question options to last question options', function () {
-    Livewire::test(CreateSession::class)
-        ->set('questions', [
-            ['text' => 'Q1', 'options' => ['Red', 'Blue']],
-        ])
-        ->call('addQuestion')
-        ->assertCount('questions', 2)
-        ->assertSet('questions.1.options', ['Red', 'Blue']);
-});

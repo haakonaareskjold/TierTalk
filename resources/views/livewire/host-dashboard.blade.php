@@ -1,4 +1,53 @@
-<div class="space-y-6">
+<div class="space-y-6" x-cloak x-data="{
+    pendingActions: {},
+    startDelay(actionKey, callback, data = null) {
+        if (!@js($session->use_delayed_actions)) {
+            callback();
+            return;
+        }
+
+        if (this.pendingActions[actionKey]) {
+            clearTimeout(this.pendingActions[actionKey].timeout);
+            clearInterval(this.pendingActions[actionKey].interval);
+        }
+
+        const id = Date.now();
+        this.pendingActions[actionKey] = {
+            id: id,
+            progress: 100,
+            secondsRemaining: 5,
+            interval: null,
+            data: data
+        };
+
+        const duration = 5000;
+        const startTime = Date.now();
+
+        this.pendingActions[actionKey].interval = setInterval(() => {
+            const elapsed = Date.now() - startTime;
+            this.pendingActions[actionKey].progress = Math.max(0, 100 - (elapsed / duration * 100));
+            this.pendingActions[actionKey].secondsRemaining = Math.ceil(Math.max(0, (duration - elapsed) / 1000));
+            if (this.pendingActions[actionKey].progress <= 0) {
+                clearInterval(this.pendingActions[actionKey].interval);
+            }
+        }, 50);
+
+        this.pendingActions[actionKey].timeout = setTimeout(() => {
+            if (this.pendingActions[actionKey] && this.pendingActions[actionKey].id === id) {
+                clearInterval(this.pendingActions[actionKey].interval);
+                callback();
+                delete this.pendingActions[actionKey];
+            }
+        }, duration);
+    },
+    undoAction(actionKey) {
+        if (this.pendingActions[actionKey]) {
+            clearTimeout(this.pendingActions[actionKey].timeout);
+            clearInterval(this.pendingActions[actionKey].interval);
+            delete this.pendingActions[actionKey];
+        }
+    }
+}">
     <!-- Session Info Header -->
     <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-6">
         <div class="flex flex-wrap items-center justify-between gap-4">
@@ -66,6 +115,15 @@
                     >
                     <span class="text-sm text-gray-700 dark:text-gray-300">Show voter names on hover to all</span>
                 </label>
+                <label class="flex items-center gap-2 cursor-pointer">
+                    <input
+                        type="checkbox"
+                        wire:click="toggleUseDelayedActions"
+                        {{ $session->use_delayed_actions ? 'checked' : '' }}
+                        class="w-4 h-4 text-primary border-gray-300 dark:border-gray-600 rounded focus:ring-primary"
+                    >
+                    <span class="text-sm text-gray-700 dark:text-gray-300">Use 5s delay with Undo</span>
+                </label>
             </div>
         </div>
     </div>
@@ -77,7 +135,7 @@
                 <h2 class="text-xl font-semibold text-gray-900 dark:text-white mb-4">Questions</h2>
 
                 <!-- Add New Question -->
-                <form wire:submit="addQuestion" class="mb-6 p-4 bg-gray-50 dark:bg-gray-900/50 rounded-lg border border-gray-200 dark:border-gray-700">
+                <form x-on:submit.prevent="startDelay('addQuestion', () => $wire.addQuestion())" class="mb-6 p-4 bg-gray-50 dark:bg-gray-900/50 rounded-lg border border-gray-200 dark:border-gray-700">
                     <div class="mb-3">
                         <input
                             type="text"
@@ -90,19 +148,7 @@
 
                     <!-- Answer Options -->
                     <div class="mb-3">
-                        <div class="flex justify-between items-center mb-2">
-                            <label class="block text-xs font-medium text-gray-500 dark:text-gray-400">Answer Options</label>
-                            @if($questions->count() > 0)
-                                <button
-                                    type="button"
-                                    wire:click="reuseFromPrevious"
-                                    class="text-[10px] text-primary hover:text-primary-dark font-medium flex items-center gap-1"
-                                    title="Copy options from the last question"
-                                >
-                                    📋 Reuse from previous
-                                </button>
-                            @endif
-                        </div>
+                        <label class="block text-xs font-medium text-gray-500 dark:text-gray-400 mb-2">Answer Options</label>
                         <div class="space-y-2">
                             @foreach($newOptions as $oIndex => $option)
                                 <div class="flex gap-2 items-center">
@@ -133,8 +179,21 @@
                         </button>
                     </div>
 
+                    <template x-if="pendingActions['addQuestion']">
+                        <div class="space-y-2">
+                            <div class="flex items-center justify-between text-sm text-gray-600 dark:text-gray-400">
+                                <span>Adding question in <span x-text="pendingActions['addQuestion'].secondsRemaining"></span>s...</span>
+                                <button type="button" x-on:click="undoAction('addQuestion')" class="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded text-xs font-bold transition">UNDO</button>
+                            </div>
+                            <div class="h-1.5 w-full bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
+                                <div class="h-full bg-primary transition-all duration-75" x-bind:style="{ width: pendingActions['addQuestion'].progress + '%' }"></div>
+                            </div>
+                        </div>
+                    </template>
+
                     <button
                         type="submit"
+                        x-show="!pendingActions['addQuestion']"
                         class="w-full bg-primary hover:bg-primary-dark text-white px-4 py-2 rounded-lg transition"
                     >
                         Add Question
@@ -171,13 +230,6 @@
                                         🔄
                                     </button>
                                     <button
-                                        wire:click="copyOptionsFrom({{ $question->id }})"
-                                        class="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 px-2 py-1 rounded transition"
-                                        title="Reuse these options for new question"
-                                    >
-                                        📋
-                                    </button>
-                                    <button
                                         wire:click="confirmDelete({{ $question->id }})"
                                         class="text-red-500 hover:text-red-700 px-2 py-1 rounded transition"
                                         title="Delete"
@@ -199,10 +251,22 @@
                             @if(!$hostVoted)
                                 <div class="mt-4 p-3 bg-blue-50 dark:bg-blue-900/20 rounded-lg border border-blue-200 dark:border-blue-800">
                                     <p class="text-sm text-blue-700 dark:text-blue-300 mb-2">Cast your vote:</p>
-                                    <div class="flex flex-wrap gap-2">
+                                    <template x-if="pendingActions['vote-{{ $question->id }}']">
+                                        <div class="space-y-2">
+                                            <div class="flex items-center justify-between text-sm text-blue-700 dark:text-blue-300">
+                                                <span>Voting <span class="font-bold" x-text="pendingActions['vote-{{ $question->id }}'].data"></span> in <span x-text="pendingActions['vote-{{ $question->id }}'].secondsRemaining"></span>s...</span>
+                                                <button type="button" x-on:click="undoAction('vote-{{ $question->id }}')" class="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded text-xs font-bold transition">UNDO</button>
+                                            </div>
+                                            <div class="h-1.5 w-full bg-blue-200 dark:bg-blue-900/40 rounded-full overflow-hidden">
+                                                <div class="h-full bg-primary transition-all duration-75" x-bind:style="{ width: pendingActions['vote-{{ $question->id }}'].progress + '%' }"></div>
+                                            </div>
+                                        </div>
+                                    </template>
+
+                                    <div class="flex flex-wrap gap-2" x-show="!pendingActions['vote-{{ $question->id }}']">
                                         @foreach($question->answer_choices as $option)
                                             <button
-                                                wire:click="vote({{ $question->id }}, '{{ addslashes($option) }}')"
+                                                x-on:click="startDelay('vote-{{ $question->id }}', () => $wire.vote({{ $question->id }}, '{{ addslashes($option) }}'), '{{ addslashes($option) }}')"
                                                 class="px-4 py-2 text-sm rounded-lg border-2 border-blue-300 dark:border-blue-700 hover:border-blue-500 hover:bg-blue-500 hover:text-white text-blue-700 dark:text-blue-300 font-medium transition"
                                             >
                                                 {{ $option }}
