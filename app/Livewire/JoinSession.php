@@ -34,7 +34,14 @@ class JoinSession extends Component
             'username' => 'required|string|min:2|max:50',
         ]);
 
-        // Check if username is already taken in this session
+        // Check if username matches the host's username (case-insensitive)
+        if (mb_strtolower($this->username) === mb_strtolower($this->session->username ?? '')) {
+            $this->addError('username', 'This username is already taken by the host.');
+
+            return;
+        }
+
+        // Check if username is already taken in this session (case-insensitive)
         $exists = $this->session->participants()
             ->where('username', 'LIKE', $this->username)
             ->exists();
