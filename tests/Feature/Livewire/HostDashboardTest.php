@@ -324,3 +324,37 @@ it('orders questions correctly', function () {
         ->and($questions[1]->question_text)->toBe('Second?')
         ->and($questions[1]->order)->toBe(1);
 });
+
+it('can reuse options from previous question', function () {
+    $session = createHostSession();
+    $session->questions()->create([
+        'question_text' => 'First?',
+        'answer_options' => ['Custom 1', 'Custom 2'],
+        'order' => 0,
+    ]);
+
+    Livewire::test(HostDashboard::class, ['session' => $session])
+        ->assertSet('newOptions', ['Yes', 'No'])
+        ->call('reuseFromPrevious')
+        ->assertSet('newOptions', ['Custom 1', 'Custom 2']);
+});
+
+it('can copy options from a specific question', function () {
+    $session = createHostSession();
+    $q1 = $session->questions()->create([
+        'question_text' => 'Q1?',
+        'answer_options' => ['A', 'B'],
+        'order' => 0,
+    ]);
+    $q2 = $session->questions()->create([
+        'question_text' => 'Q2?',
+        'answer_options' => ['C', 'D'],
+        'order' => 1,
+    ]);
+
+    Livewire::test(HostDashboard::class, ['session' => $session])
+        ->call('copyOptionsFrom', $q1->id)
+        ->assertSet('newOptions', ['A', 'B'])
+        ->call('copyOptionsFrom', $q2->id)
+        ->assertSet('newOptions', ['C', 'D']);
+});

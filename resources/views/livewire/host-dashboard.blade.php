@@ -90,7 +90,19 @@
 
                     <!-- Answer Options -->
                     <div class="mb-3">
-                        <label class="block text-xs font-medium text-gray-500 dark:text-gray-400 mb-2">Answer Options</label>
+                        <div class="flex justify-between items-center mb-2">
+                            <label class="block text-xs font-medium text-gray-500 dark:text-gray-400">Answer Options</label>
+                            @if($questions->count() > 0)
+                                <button
+                                    type="button"
+                                    wire:click="reuseFromPrevious"
+                                    class="text-[10px] text-primary hover:text-primary-dark font-medium flex items-center gap-1"
+                                    title="Copy options from the last question"
+                                >
+                                    📋 Reuse from previous
+                                </button>
+                            @endif
+                        </div>
                         <div class="space-y-2">
                             @foreach($newOptions as $oIndex => $option)
                                 <div class="flex gap-2 items-center">
@@ -157,6 +169,13 @@
                                         title="Reset votes"
                                     >
                                         🔄
+                                    </button>
+                                    <button
+                                        wire:click="copyOptionsFrom({{ $question->id }})"
+                                        class="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 px-2 py-1 rounded transition"
+                                        title="Reuse these options for new question"
+                                    >
+                                        📋
                                     </button>
                                     <button
                                         wire:click="confirmDelete({{ $question->id }})"

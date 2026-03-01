@@ -61,7 +61,21 @@ class CreateSession extends Component
 
     public function addQuestion(): void
     {
-        $this->questions[] = ['text' => '', 'options' => ['Yes', 'No']];
+        $options = ['Yes', 'No'];
+
+        if (! empty($this->questions)) {
+            $lastQuestion = end($this->questions);
+            $options = $lastQuestion['options'];
+        }
+
+        $this->questions[] = ['text' => '', 'options' => $options];
+    }
+
+    public function copyOptionsFromPrevious(int $index): void
+    {
+        if ($index > 0 && isset($this->questions[$index - 1])) {
+            $this->questions[$index]['options'] = $this->questions[$index - 1]['options'];
+        }
     }
 
     public function removeQuestion(int $index): void
