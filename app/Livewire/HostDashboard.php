@@ -43,7 +43,7 @@ class HostDashboard extends Component
         $username = $this->session->username ?: 'Host';
 
         $this->hostParticipant = $this->session->participants()
-            ->whereRaw('LOWER(username) = ?', [mb_strtolower($username)])
+            ->where('username', 'like', $username)
             ->first();
 
         if (! $this->hostParticipant) {
