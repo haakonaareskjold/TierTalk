@@ -90,6 +90,20 @@ class HostDashboard extends Component
         }
     }
 
+    public function copyOptionsFrom(int $questionId): void
+    {
+        $question = $this->session->questions()->findOrFail($questionId);
+        $this->newOptions = $question->answer_choices;
+    }
+
+    public function reuseFromPrevious(): void
+    {
+        $lastQuestion = $this->session->questions()->orderBy('order', 'desc')->first();
+        if ($lastQuestion) {
+            $this->newOptions = $lastQuestion->answer_choices;
+        }
+    }
+
     public function addQuestion(): void
     {
         $this->validate([
