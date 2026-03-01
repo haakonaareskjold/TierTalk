@@ -40,17 +40,9 @@ class HostDashboard extends Component
 
     protected function ensureHostParticipant(): void
     {
-        $username = $this->session->username ?: 'Host';
-
-        $this->hostParticipant = $this->session->participants()
-            ->where('username', 'like', $username)
-            ->first();
-
-        if (! $this->hostParticipant) {
-            $this->hostParticipant = $this->session->participants()->create([
-                'username' => $username,
-            ]);
-        }
+        $this->hostParticipant = $this->session->participants()->createOrFirst([
+            'username' => $this->session->username,
+        ]);
     }
 
     public function vote(int $questionId, string $value): void
@@ -95,20 +87,6 @@ class HostDashboard extends Component
         if (count($this->newOptions) > 2) {
             unset($this->newOptions[$index]);
             $this->newOptions = array_values($this->newOptions);
-        }
-    }
-
-    public function copyOptionsFrom(int $questionId): void
-    {
-        $question = $this->session->questions()->findOrFail($questionId);
-        $this->newOptions = $question->answer_choices;
-    }
-
-    public function reuseFromPrevious(): void
-    {
-        $lastQuestion = $this->session->questions()->orderBy('order', 'desc')->first();
-        if ($lastQuestion) {
-            $this->newOptions = $lastQuestion->answer_choices;
         }
     }
 
@@ -177,6 +155,13 @@ class HostDashboard extends Component
     public function toggleShowHoverToAll(): void
     {
         $this->session->update(['show_hover_to_all' => ! $this->session->show_hover_to_all]);
+
+        SessionUpdated::dispatch($this->session);
+    }
+
+    public function toggleUseDelayedActions(): void
+    {
+        $this->session->update(['use_delayed_actions' => ! $this->session->use_delayed_actions]);
 
         SessionUpdated::dispatch($this->session);
     }

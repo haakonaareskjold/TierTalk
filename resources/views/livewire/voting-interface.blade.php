@@ -1,4 +1,53 @@
-<div class="px-4 py-8">
+<div class="px-4 py-8" x-cloak x-data="{
+    pendingActions: {},
+    startDelay(actionKey, callback, data = null) {
+        if (!@js($session->use_delayed_actions)) {
+            callback();
+            return;
+        }
+
+        if (this.pendingActions[actionKey]) {
+            clearTimeout(this.pendingActions[actionKey].timeout);
+            clearInterval(this.pendingActions[actionKey].interval);
+        }
+
+        const id = Date.now();
+        this.pendingActions[actionKey] = {
+            id: id,
+            progress: 100,
+            secondsRemaining: 5,
+            interval: null,
+            data: data
+        };
+
+        const duration = 5000;
+        const startTime = Date.now();
+
+        this.pendingActions[actionKey].interval = setInterval(() => {
+            const elapsed = Date.now() - startTime;
+            this.pendingActions[actionKey].progress = Math.max(0, 100 - (elapsed / duration * 100));
+            this.pendingActions[actionKey].secondsRemaining = Math.ceil(Math.max(0, (duration - elapsed) / 1000));
+            if (this.pendingActions[actionKey].progress <= 0) {
+                clearInterval(this.pendingActions[actionKey].interval);
+            }
+        }, 50);
+
+        this.pendingActions[actionKey].timeout = setTimeout(() => {
+            if (this.pendingActions[actionKey] && this.pendingActions[actionKey].id === id) {
+                clearInterval(this.pendingActions[actionKey].interval);
+                callback();
+                delete this.pendingActions[actionKey];
+            }
+        }, duration);
+    },
+    undoAction(actionKey) {
+        if (this.pendingActions[actionKey]) {
+            clearTimeout(this.pendingActions[actionKey].timeout);
+            clearInterval(this.pendingActions[actionKey].interval);
+            delete this.pendingActions[actionKey];
+        }
+    }
+}">
     @if($sessionEnded)
         <div class="max-w-md mx-auto">
             <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-8 text-center">
@@ -99,17 +148,29 @@
                                 @endif
                             </div>
                         @else
-                            <div class="flex flex-wrap justify-center gap-3">
+                            <template x-if="pendingActions['vote-{{ $question->id }}']">
+                                <div class="space-y-4 py-4">
+                                    <div class="flex items-center justify-between text-gray-700 dark:text-gray-300">
+                                        <span class="font-medium text-lg">Voting <span class="font-bold text-primary" x-text="pendingActions['vote-{{ $question->id }}'].data"></span> in <span x-text="pendingActions['vote-{{ $question->id }}'].secondsRemaining"></span>s...</span>
+                                        <button type="button" x-on:click="undoAction('vote-{{ $question->id }}')" class="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded text-xs font-bold transition">UNDO</button>
+                                    </div>
+                                    <div class="h-2 w-full bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
+                                        <div class="h-full bg-primary transition-all duration-75" x-bind:style="{ width: pendingActions['vote-{{ $question->id }}'].progress + '%' }"></div>
+                                    </div>
+                                </div>
+                            </template>
+
+                            <div class="flex flex-wrap justify-center gap-3" x-show="!pendingActions['vote-{{ $question->id }}']">
                                 @foreach($question->answer_choices as $option)
                                     <button
-                                        wire:click="vote({{ $question->id }}, '{{ addslashes($option) }}')"
+                                        x-on:click="startDelay('vote-{{ $question->id }}', () => $wire.vote({{ $question->id }}, '{{ addslashes($option) }}'), '{{ addslashes($option) }}')"
                                         class="px-6 py-3 rounded-xl border-2 border-gray-200 dark:border-gray-700 hover:border-primary hover:bg-primary hover:text-white text-gray-700 dark:text-gray-300 font-medium transition transform hover:scale-105"
                                     >
                                         {{ $option }}
                                     </button>
                                 @endforeach
                             </div>
-                            <p class="text-center text-gray-400 dark:text-gray-500 text-sm mt-3">Select your answer</p>
+                            <p class="text-center text-gray-400 dark:text-gray-500 text-sm mt-3" x-show="!pendingActions['vote-{{ $question->id }}']">Select your answer</p>
                         @endif
                     </div>
                 @empty

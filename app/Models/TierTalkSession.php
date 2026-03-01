@@ -22,6 +22,7 @@ use Illuminate\Support\Str;
  * @property Carbon|null $updated_at
  * @property bool $show_average_to_all
  * @property bool $show_hover_to_all
+ * @property bool $use_delayed_actions
  * @property string|null $username
  * @property-read string $share_url
  * @property-read string $host_url
@@ -42,6 +43,7 @@ class TierTalkSession extends Model
         'expires_at',
         'show_average_to_all',
         'show_hover_to_all',
+        'use_delayed_actions',
     ];
 
     protected $casts = [
@@ -49,11 +51,13 @@ class TierTalkSession extends Model
         'max_participants' => 'integer',
         'show_average_to_all' => 'boolean',
         'show_hover_to_all' => 'boolean',
+        'use_delayed_actions' => 'boolean',
     ];
 
     protected $attributes = [
         'show_average_to_all' => true,
         'show_hover_to_all' => false,
+        'use_delayed_actions' => true,
     ];
 
     protected static function booted(): void
