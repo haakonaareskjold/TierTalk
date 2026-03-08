@@ -64,6 +64,23 @@ class CreateSession extends Component
         $this->questions[] = ['text' => '', 'options' => ['Yes', 'No']];
     }
 
+    public function copyPreviousOptions(int $index): void
+    {
+        if ($index > 0 && isset($this->questions[$index - 1])) {
+            $this->questions[$index]['options'] = $this->questions[$index - 1]['options'];
+        }
+    }
+
+    public function duplicateQuestion(int $index): void
+    {
+        $question = $this->questions[$index];
+        $newQuestion = [
+            'text' => $question['text'],
+            'options' => $question['options'],
+        ];
+        array_splice($this->questions, $index + 1, 0, [$newQuestion]);
+    }
+
     public function removeQuestion(int $index): void
     {
         if (count($this->questions) > 1) {

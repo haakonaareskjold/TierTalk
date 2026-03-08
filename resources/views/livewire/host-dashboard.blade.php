@@ -148,7 +148,18 @@
 
                     <!-- Answer Options -->
                     <div class="mb-3">
-                        <label class="block text-xs font-medium text-gray-500 dark:text-gray-400 mb-2">Answer Options</label>
+                        <div class="flex justify-between items-center mb-2">
+                            <label class="block text-xs font-medium text-gray-500 dark:text-gray-400">Answer Options</label>
+                            @if($session->questions()->count() > 0)
+                                <button
+                                    type="button"
+                                    wire:click="copyLastQuestionOptions"
+                                    class="text-xs text-primary hover:underline"
+                                >
+                                    Copy last question options
+                                </button>
+                            @endif
+                        </div>
                         <div class="space-y-2">
                             @foreach($newOptions as $oIndex => $option)
                                 <div class="flex gap-2 items-center">
@@ -215,6 +226,13 @@
                                     </div>
                                 </div>
                                 <div class="flex items-center gap-2">
+                                    <button
+                                        wire:click="duplicateQuestion({{ $question->id }})"
+                                        class="text-primary hover:text-primary-dark px-2 py-1 rounded transition"
+                                        title="Duplicate question"
+                                    >
+                                        👯
+                                    </button>
                                     <button
                                         wire:click="confirmToggle({{ $question->id }})"
                                         class="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 px-2 py-1 rounded transition"

@@ -79,6 +79,20 @@ it('resets new question form after adding', function () {
         ->assertSet('newOptions', ['Yes', 'No']);
 });
 
+it('can copy options from last question in dashboard', function () {
+    $session = createHostSession();
+    $session->questions()->create([
+        'question_text' => 'Previous?',
+        'answer_options' => ['Option X', 'Option Y'],
+        'order' => 0,
+    ]);
+
+    Livewire::test(HostDashboard::class, ['session' => $session])
+        ->assertSet('newOptions', ['Yes', 'No'])
+        ->call('copyLastQuestionOptions')
+        ->assertSet('newOptions', ['Option X', 'Option Y']);
+});
+
 it('fails validation with short question', function () {
     $session = createHostSession();
 
@@ -323,4 +337,25 @@ it('orders questions correctly', function () {
         ->and($questions[0]->order)->toBe(0)
         ->and($questions[1]->question_text)->toBe('Second?')
         ->and($questions[1]->order)->toBe(1);
+});
+
+it('can duplicate an existing question', function () {
+    Event::fake([QuestionAdded::class]);
+    $session = createHostSession();
+    $question = $session->questions()->create([
+        'question_text' => 'Original Question',
+        'answer_options' => ['Option A', 'Option B'],
+        'order' => 0,
+    ]);
+
+    Livewire::test(HostDashboard::class, ['session' => $session])
+        ->call('duplicateQuestion', $question->id);
+
+    $questions = $session->fresh()->questions;
+    expect($questions)->toHaveCount(2)
+        ->and($questions[1]->question_text)->toBe('Original Question')
+        ->and($questions[1]->answer_options)->toBe(['Option A', 'Option B'])
+        ->and($questions[1]->order)->toBe(1);
+
+    Event::assertDispatched(QuestionAdded::class);
 });
