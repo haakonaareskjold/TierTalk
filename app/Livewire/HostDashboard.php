@@ -121,22 +121,6 @@ class HostDashboard extends Component
         }
     }
 
-    public function duplicateQuestion(int $questionId): void
-    {
-        $original = $this->session->questions()->findOrFail($questionId);
-
-        $maxOrder = $this->session->questions()->max('order');
-        $maxOrder = is_numeric($maxOrder) ? (int) $maxOrder : -1;
-
-        $question = $this->session->questions()->create([
-            'question_text' => $original->question_text,
-            'answer_options' => $original->answer_options,
-            'order' => $maxOrder + 1,
-        ]);
-
-        QuestionAdded::dispatch($this->session, $question);
-    }
-
     public function confirmReset(int $questionId): void
     {
         $this->confirmingId = $questionId;

@@ -51,26 +51,6 @@
                                         >
                                         @error('questions.' . $qIndex . '.text') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
                                     </div>
-                                    <div class="flex gap-2">
-                                        <button
-                                            type="button"
-                                            wire:click="duplicateQuestion({{ $qIndex }})"
-                                            class="px-3 py-2 text-primary hover:bg-primary/10 rounded-lg transition"
-                                            title="Duplicate question"
-                                        >
-                                            <span class="text-lg">👯</span>
-                                        </button>
-                                        @if(count($questions) > 1)
-                                            <button
-                                                type="button"
-                                                wire:click="removeQuestion({{ $qIndex }})"
-                                                class="px-3 py-2 text-red-500 hover:bg-red-100 dark:hover:bg-red-900/30 rounded-lg transition"
-                                                title="Remove question"
-                                            >
-                                                ✕
-                                            </button>
-                                        @endif
-                                    </div>
                                 </div>
 
                                 <!-- Answer Options -->
