@@ -98,16 +98,6 @@ it('can copy options from previous question', function () {
         ->assertSet('questions.1.options', ['Option A', 'Option B']);
 });
 
-it('can duplicate question', function () {
-    Livewire::test(CreateSession::class)
-        ->set('questions.0.text', 'Original Question')
-        ->set('questions.0.options', ['A', 'B'])
-        ->call('duplicateQuestion', 0)
-        ->assertCount('questions', 2)
-        ->assertSet('questions.1.text', 'Original Question')
-        ->assertSet('questions.1.options', ['A', 'B']);
-});
-
 it('can remove question', function () {
     Livewire::test(CreateSession::class)
         ->call('addQuestion')

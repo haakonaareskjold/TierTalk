@@ -71,16 +71,6 @@ class CreateSession extends Component
         }
     }
 
-    public function duplicateQuestion(int $index): void
-    {
-        $question = $this->questions[$index];
-        $newQuestion = [
-            'text' => $question['text'],
-            'options' => $question['options'],
-        ];
-        array_splice($this->questions, $index + 1, 0, [$newQuestion]);
-    }
-
     public function removeQuestion(int $index): void
     {
         if (count($this->questions) > 1) {
